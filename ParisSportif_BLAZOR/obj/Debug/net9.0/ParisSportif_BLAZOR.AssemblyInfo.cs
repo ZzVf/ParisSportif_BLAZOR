@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ParisSportif_BLAZOR")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+251305831ee7a456ebc312fea4c44ed4e5bbd8ee")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+17a79b2782c3bba2185edde56c2a4de7a433013c")]
 [assembly: System.Reflection.AssemblyProductAttribute("ParisSportif_BLAZOR")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ParisSportif_BLAZOR")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
