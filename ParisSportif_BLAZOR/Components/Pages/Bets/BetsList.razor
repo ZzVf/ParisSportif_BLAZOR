@@ -1,0 +1,52 @@
+﻿@page "/bets"
+@page "/betlist"
+
+<h3>Bets</h3>
+
+<button class="btn btn-sm btn-success me-1">Nouveau</button>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Point</th>
+      <th scope="col">Status</th>
+      <th scope="col">Prediction</th>
+      <th scope="col">ClientId</th>
+      <th scope="col">MatchId</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <th scope="row">300</th>
+      <td>50</td>
+      <td>0</td>
+      <td>0</td>
+      <td>200</td>
+      <td>100</td>
+      <td>
+        <button class="btn btn-sm btn-primary me-1">Modifier</button>
+        <button class="btn btn-sm btn-danger">Supprimer</button>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">301</th>
+      <td>100</td>
+      <td>1</td>
+      <td>2</td>
+      <td>201</td>
+      <td>101</td>
+      <td>
+        <button class="btn btn-sm btn-primary me-1">Modifier</button>
+        <button class="btn btn-sm btn-danger">Supprimer</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+@code {
+
+}
