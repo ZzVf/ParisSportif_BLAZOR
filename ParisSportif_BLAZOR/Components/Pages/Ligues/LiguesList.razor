@@ -1,0 +1,44 @@
+﻿@page "/ligues"
+@page "/ligueslist"
+
+<h3>Ligues</h3>
+
+<button class="btn btn-sm btn-success me-1">Nouveau</button>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Name</th>
+      <th scope="col">Logo</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <th scope="row">1</th>
+      <td>Premier League</td>
+      <td>premierleague.png</td>
+      <td>
+        <button class="btn btn-sm btn-primary me-1">Modifier</button>
+        <button class="btn btn-sm btn-danger">Supprimer</button>
+      </td>
+    </tr>
+
+    <tr>
+      <th scope="row">2</th>
+      <td>La Liga</td>
+      <td>laliga.png</td>
+      <td>
+        <button class="btn btn-sm btn-primary me-1">Modifier</button>
+        <button class="btn btn-sm btn-danger">Supprimer</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+@code {
+
+}

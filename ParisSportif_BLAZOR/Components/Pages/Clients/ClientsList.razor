@@ -1,0 +1,54 @@
+﻿@page "/clients"
+@page "/clientslist"
+
+<h3>Clients</h3>
+
+<button class="btn btn-sm btn-success me-1">Nouveau</button>
+
+<table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Name</th>
+          <th scope="col">Password</th>
+          <th scope="col">CreationDate</th>
+          <th scope="col">Points</th>
+          <th scope="col">isBlocked</th>
+          <th scope="col">isAdmin</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">200</th>
+          <td>Andreas17</td>
+          <td>••••••••</td>
+          <td>—</td>
+          <td>500</td>
+          <td>false</td>
+          <td>false</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1">Modifier</button>
+            <button class="btn btn-sm btn-danger">Supprimer</button>
+          </td>
+        </tr>
+
+        <tr>
+          <th scope="row">201</th>
+          <td>AdminUser</td>
+          <td>••••••••</td>
+          <td>—</td>
+          <td>1000</td>
+          <td>false</td>
+          <td>true</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1">Modifier</button>
+            <button class="btn btn-sm btn-danger">Supprimer</button>
+          </td>
+        </tr>
+      </tbody>
+</table>
+
+@code {
+
+}

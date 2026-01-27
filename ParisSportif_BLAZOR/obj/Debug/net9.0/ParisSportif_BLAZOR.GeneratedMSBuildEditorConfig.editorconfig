@@ -24,6 +24,18 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/andreas/Documents/GitHub/ParisSportif_BLAZOR/ParisSportif_BLAZOR/Components/Pages/Bets/BetsList.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9CZXRzL0JldHNMaXN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/andreas/Documents/GitHub/ParisSportif_BLAZOR/ParisSportif_BLAZOR/Components/Pages/Clients/ClientsList.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DbGllbnRzL0NsaWVudHNMaXN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/andreas/Documents/GitHub/ParisSportif_BLAZOR/ParisSportif_BLAZOR/Components/Pages/Clubs/ClubsList.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DbHVicy9DbHVic0xpc3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/andreas/Documents/GitHub/ParisSportif_BLAZOR/ParisSportif_BLAZOR/Components/Pages/Counter.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Db3VudGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
@@ -34,6 +46,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/andreas/Documents/GitHub/ParisSportif_BLAZOR/ParisSportif_BLAZOR/Components/Pages/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ib21lLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/andreas/Documents/GitHub/ParisSportif_BLAZOR/ParisSportif_BLAZOR/Components/Pages/Ligues/LiguesList.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9MaWd1ZXMvTGlndWVzTGlzdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/andreas/Documents/GitHub/ParisSportif_BLAZOR/ParisSportif_BLAZOR/Components/Pages/Matchs/MatchsList.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9NYXRjaHMvTWF0Y2hzTGlzdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/andreas/Documents/GitHub/ParisSportif_BLAZOR/ParisSportif_BLAZOR/Components/Pages/Weather.razor]
