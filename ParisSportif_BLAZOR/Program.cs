@@ -5,20 +5,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient("API", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7034/api/");
+    client.BaseAddress = new Uri("https://localhost:7034");
 });
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-var app = builder.Build();
-
 builder.Services.AddSingleton<MatchService>();
 builder.Services.AddSingleton<BetService>();
 builder.Services.AddSingleton<ClientService>();
 builder.Services.AddSingleton<ClubService>();
 builder.Services.AddSingleton<LigueService>();
+
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -1,104 +1,74 @@
 ﻿@page "/matchs"
 @page "/matchslist"
+@using ParisSportif_BLAZOR.Services
+@using ProjectFootAPI.Model
+@inject MatchService MatchService;
 
 <h3>Matchs</h3>
 
-<button class="btn btn-sm btn-success me-1">Nouveau</button>
+<h2 style="color:red;">@ErrorMessage</h2>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Score 1</th>
-      <th scope="col">Score 2</th>
-      <th scope="col">Date & Heure</th>
-      <th scope="col">Top Match</th>
-      <th scope="col">Status</th>
-      <th scope="col">Club 1</th>
-      <th scope="col">Club 2</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
+@if(string.IsNullOrWhiteSpace(ErrorMessage)) {
+  <button class="btn btn-sm btn-success me-1">Nouveau</button>
+}
 
-  <tbody>
-    <tr>
-      <th scope="row">100</th>
-      <td>3</td>
-      <td>1</td>
-      <td>2025-03-12 20:45</td>
-      <td>true</td>
-      <td>1</td>
-      <td>10</td>
-      <td>11</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
+@if(matchs == null)
+{
+    <p>Aucun match à afficher...</p>
+}
+else{
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Score 1</th>
+        <th scope="col">Score 2</th>
+        <th scope="col">Date & Heure</th>
+        <th scope="col">Top Match</th>
+        <th scope="col">Status</th>
+        <th scope="col">Club 1</th>
+        <th scope="col">Club 2</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
 
-    <tr>
-      <th scope="row">101</th>
-      <td>1</td>
-      <td>1</td>
-      <td>2025-04-05 21:00</td>
-      <td>true</td>
-      <td>3</td>
-      <td>12</td>
-      <td>13</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">102</th>
-      <td>0</td>
-      <td>2</td>
-      <td>2025-05-18 18:30</td>
-      <td>false</td>
-      <td>2</td>
-      <td>11</td>
-      <td>10</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">103</th>
-      <td>0</td>
-      <td>0</td>
-      <td>2025-06-01 20:00</td>
-      <td>false</td>
-      <td>0</td>
-      <td>10</td>
-      <td>12</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">104</th>
-      <td>2</td>
-      <td>0</td>
-      <td>2025-07-11 17:00</td>
-      <td>false</td>
-      <td>4</td>
-      <td>13</td>
-      <td>11</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+    <tbody>
+      @foreach (var m in matchs)
+      {
+        <tr>
+          <th scope="row">@m.Id</th>
+          <td>@m.Score1</td>
+          <td>@m.Score2</td>
+          <td>@m.MatchDateTime</td>
+          <td>@(m.isTopMatch ? "Oui" : "Non")</td>
+          <td>@m.matchStatus</td>
+          <td>@m.ClubId1</td>
+          <td>@m.Club2?.Name</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1">Modifier</button>
+            <button class="btn btn-sm btn-danger me-1">Supprimer</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
 
 @code {
+  List<Match> matchs = new List<Match>();
+  string ErrorMessage = string.Empty;
 
+  protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            matchs = await MatchService.GetAllAsync();
+            Console.WriteLine("Matchs récupérés : " + matchs.Count);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
+
+        }
+    }
 }
