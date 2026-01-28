@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using ProjectFootAPI.Model;
+using ParisSportif_BLAZOR.Model;
 
 namespace ParisSportif_BLAZOR.Services
 {

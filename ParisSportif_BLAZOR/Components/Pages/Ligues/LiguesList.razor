@@ -1,44 +1,65 @@
 ﻿@page "/ligues"
 @page "/ligueslist"
+@using ParisSportif_BLAZOR.Services
+@using ParisSportif_BLAZOR.Model
+@inject LigueService LigueService;
 
 <h3>Ligues</h3>
 
-<button class="btn btn-sm btn-success me-1">Nouveau</button>
+<h2 style="color:red;">@ErrorMessage</h2>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Name</th>
-      <th scope="col">Logo</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
+@if(string.IsNullOrWhiteSpace(ErrorMessage)) {
+  <button class="btn btn-sm btn-success me-1">Nouveau</button>
+}
 
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Premier League</td>
-      <td>premierleague.png</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
+@if(ligues == null)
+{
+    <p>Aucune ligue à afficher...</p>
+}
+else{
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Logo</th>
+        <th scope="col">Actions</th> 
+      </tr>
+    </thead>
 
-    <tr>
-      <th scope="row">2</th>
-      <td>La Liga</td>
-      <td>laliga.png</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+    <tbody>
+      @foreach (var l in ligues)
+      {
+        <tr>
+          <th scope="row">@l.Id</th>
+          <td>@l.Name</td>
+          <td>@l.Logo</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1">Modifier</button>
+            <button class="btn btn-sm btn-danger me-1">Supprimer</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
 
 
 @code {
+  List<Ligue> ligues = new List<Ligue>();
+  string ErrorMessage = string.Empty;
 
+  protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ligues = await LigueService.GetAllAsync();
+            Console.WriteLine("Ligues récupérés : " + ligues.Count);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
+
+        }
+    }
 }

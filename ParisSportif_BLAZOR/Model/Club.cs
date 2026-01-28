@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace ProjectFootAPI.Model;
+namespace ParisSportif_BLAZOR.Model;
 
 [Index(nameof(Ranking), nameof(LigueId), IsUnique = true)]
 public class Club

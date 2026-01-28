@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectFootAPI.Model
+namespace ParisSportif_BLAZOR.Model
 {
     public enum BetStatus
     {

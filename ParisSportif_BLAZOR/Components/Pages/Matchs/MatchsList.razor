@@ -1,7 +1,7 @@
 ﻿@page "/matchs"
 @page "/matchslist"
 @using ParisSportif_BLAZOR.Services
-@using ProjectFootAPI.Model
+@using ParisSportif_BLAZOR.Model
 @inject MatchService MatchService;
 
 <h3>Matchs</h3>
@@ -43,7 +43,7 @@ else{
           <td>@(m.isTopMatch ? "Oui" : "Non")</td>
           <td>@m.matchStatus</td>
           <td>@m.ClubId1</td>
-          <td>@m.Club2?.Name</td>
+          <td>@m.ClubId2</td>
           <td>
             <button class="btn btn-sm btn-primary me-1">Modifier</button>
             <button class="btn btn-sm btn-danger me-1">Supprimer</button>
