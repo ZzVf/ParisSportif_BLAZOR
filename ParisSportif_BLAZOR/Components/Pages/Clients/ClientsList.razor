@@ -1,54 +1,73 @@
 ﻿@page "/clients"
 @page "/clientslist"
+@using ParisSportif_BLAZOR.Model
+@using ParisSportif_BLAZOR.Services
+
+@inject ClientService ClientService;
 
 <h3>Clients</h3>
 
-<button class="btn btn-sm btn-success me-1">Nouveau</button>
+<h2 style="color:red;">@ErrorMessage</h2>
 
-<table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">Id</th>
-          <th scope="col">Name</th>
-          <th scope="col">Password</th>
-          <th scope="col">CreationDate</th>
-          <th scope="col">Points</th>
-          <th scope="col">isBlocked</th>
-          <th scope="col">isAdmin</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">200</th>
-          <td>Andreas17</td>
-          <td>••••••••</td>
-          <td>—</td>
-          <td>500</td>
-          <td>false</td>
-          <td>false</td>
-          <td>
-            <button class="btn btn-sm btn-primary me-1">Modifier</button>
-            <button class="btn btn-sm btn-danger">Supprimer</button>
-          </td>
-        </tr>
+@if (string.IsNullOrWhiteSpace(ErrorMessage))
+{
+    <button class="btn btn-sm btn-success me-1">Nouveau</button>
+}
 
-        <tr>
-          <th scope="row">201</th>
-          <td>AdminUser</td>
-          <td>••••••••</td>
-          <td>—</td>
-          <td>1000</td>
-          <td>false</td>
-          <td>true</td>
-          <td>
-            <button class="btn btn-sm btn-primary me-1">Modifier</button>
-            <button class="btn btn-sm btn-danger">Supprimer</button>
-          </td>
-        </tr>
-      </tbody>
-</table>
+@if (clients == null || clients.Count == 0)
+{
+    <p>Aucun client à afficher...</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Password</th>
+                <th scope="col">CreationDate</th>
+                <th scope="col">Points</th>
+                <th scope="col">isBlocked</th>
+                <th scope="col">isAdmin</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in clients)
+            {
+                <tr>
+                    <th scope="row">@c.Id</th>
+                    <td>@c.Name</td>
+                    <td>••••••••</td>
+                    <td>@c.CreationDate.ToString("dd/MM/yyyy")</td>
+                    <td>@c.Points</td>
+                    <td>@c.isBlocked</td>
+                    <td>@c.isAdmin</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary me-1">Modifier</button>
+                        <button class="btn btn-sm btn-danger">Supprimer</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
+    List<Client> clients = new List<Client>();
+    string ErrorMessage = string.Empty;
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            clients = await ClientService.GetAllAsync();
+            Console.WriteLine("Clients récupérés : " + clients.Count);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
+        }
+    }
 }

@@ -1,74 +1,66 @@
 ﻿@page "/clubs"
 @page "/clubslist"
+@using ParisSportif_BLAZOR.Model
+@using ParisSportif_BLAZOR.Services
+@inject ClubService ClubService;
 
 <h3>Clubs</h3>
 
-<button class="btn btn-sm btn-success me-1">Nouveau</button>
+@if(string.IsNullOrWhiteSpace(ErrorMessage)) {
+  <button class="btn btn-sm btn-success me-1">Nouveau</button>
+}
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Name</th>
-      <th scope="col">Logo</th>
-      <th scope="col">Ranking</th>
-      <th scope="col">LigueId</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr>
-      <th scope="row">10</th>
-      <td>Manchester City</td>
-      <td>mancity.png</td>
-      <td>1</td>
-      <td>1</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">11</th>
-      <td>Liverpool FC</td>
-      <td>liverpool.png</td>
-      <td>2</td>
-      <td>1</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">12</th>
-      <td>Real Madrid</td>
-      <td>realmadrid.png</td>
-      <td>1</td>
-      <td>2</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">13</th>
-      <td>FC Barcelona</td>
-      <td>barcelona.png</td>
-      <td>2</td>
-      <td>2</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+@if(clubs == null || clubs.Count == 0)
+{
+    <p>Aucun club à afficher...</p>
+}
+else{
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Logo</th>
+        <th scope="col">Ranking</th>
+        <th scope="col">LigueId</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+  
+    <tbody>
+      @foreach (var c in clubs)
+      {
+        <tr>
+          <th scope="row">@c.Id</th>
+          <td>@c.Name</td>
+          <td>@c.Logo</td>
+          <td>@c.Ranking</td>
+          <td>@c.LigueId</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1">Modifier</button>
+            <button class="btn btn-sm btn-danger me-1">Supprimer</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
 
 @code {
+  List<Club> clubs = new List<Club>();
+  string ErrorMessage = string.Empty;
 
+  protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            clubs = await ClubService.GetAllAsync();
+            Console.WriteLine("Clubs récupérés : " + clubs.Count);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
+
+        }
+    }
 }
