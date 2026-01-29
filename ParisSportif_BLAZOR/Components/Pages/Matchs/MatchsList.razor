@@ -28,6 +28,7 @@ else{
         <th scope="col">Status</th>
         <th scope="col">Club 1</th>
         <th scope="col">Club 2</th>
+        <th scope="col">Ligue</th>
         <th scope="col">Actions</th>
       </tr>
     </thead>
@@ -42,8 +43,9 @@ else{
           <td>@m.MatchDateTime</td>
           <td>@(m.isTopMatch ? "Oui" : "Non")</td>
           <td>@m.matchStatus</td>
-          <td>@m.ClubId1</td>
-          <td>@m.ClubId2</td>
+          <td>@m.Club1.Name</td>
+          <td>@m.Club2.Name</td>
+          <td>@m.Club1.Ligue?.Name</td>
           <td>
             <button class="btn btn-sm btn-primary me-1">Modifier</button>
             <button class="btn btn-sm btn-danger me-1">Supprimer</button>
