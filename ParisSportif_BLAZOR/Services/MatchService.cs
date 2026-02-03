@@ -39,6 +39,14 @@ namespace ParisSportif_BLAZOR.Services
             return response.IsSuccessStatusCode;
         }
 
+        public async Task<bool> CancelAsync(int matchId)
+        {
+            var matchToCancel = await GetAsync(matchId);
+            matchToCancel.matchStatus = MatchStatus.Canceled;
+            var response = await _http.PutAsJsonAsync($"api/Matches/{matchToCancel.Id}", matchToCancel);
+            return response.IsSuccessStatusCode;
+        }
+
         public async Task<bool> DeleteAsync(int id)
         {
             var response = await _http.DeleteAsync($"api/Matches/{id}");

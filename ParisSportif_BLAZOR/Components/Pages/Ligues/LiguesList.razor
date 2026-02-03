@@ -2,6 +2,7 @@
 @page "/ligueslist"
 @using ParisSportif_BLAZOR.Services
 @using ParisSportif_BLAZOR.Model
+@rendermode InteractiveServer
 @inject LigueService LigueService;
 
 <h3>Ligues</h3>
@@ -36,7 +37,7 @@ else{
           <td>@l.Logo</td>
           <td>
             <button class="btn btn-sm btn-primary me-1">Modifier</button>
-            <button class="btn btn-sm btn-danger me-1">Supprimer</button>
+            <button class="btn btn-sm btn-danger me-1" @onclick="() => ConfirmDelete(l.Id)">Supprimer</button>
           </td>
         </tr>
       }
@@ -44,6 +45,34 @@ else{
   </table>
 }
 
+@if (ShowDeleteModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Êtes-vous sûr de vouloir supprimer cette ligue?
+                        <br />
+                        <strong>Cette action est irréversible.</strong>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CancelDelete">
+                        Annuler
+                    </button>
+                    <button class="btn btn-danger" @onclick="DeleteConfirmed">
+                        Supprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
   List<Ligue> ligues = new List<Ligue>();
@@ -61,5 +90,32 @@ else{
             ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
 
         }
+    }
+
+    private int? LigueIdToDelete;
+    private bool ShowDeleteModal = false;
+
+    private void ConfirmDelete(int id)
+    {
+        LigueIdToDelete = id;
+        ShowDeleteModal = true;
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        if (LigueIdToDelete.HasValue)
+        {
+            await LigueService.DeleteAsync(LigueIdToDelete.Value);
+            ligues = await LigueService.GetAllAsync();
+        }
+
+        ShowDeleteModal = false;
+        LigueIdToDelete = null;
+    }
+
+    private void CancelDelete()
+    {
+        ShowDeleteModal = false;
+        LigueIdToDelete = null;
     }
 }

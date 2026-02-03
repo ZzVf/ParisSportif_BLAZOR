@@ -2,6 +2,7 @@
 @page "/betlist"
 @using ParisSportif_BLAZOR.Model
 @using ParisSportif_BLAZOR.Services
+@rendermode InteractiveServer
 
 @inject BetService BetService
 
@@ -45,12 +46,41 @@ else
                     <td>@b.MatchId</td>
                     <td>
                         <button class="btn btn-sm btn-primary me-1">Modifier</button>
-                        <button class="btn btn-sm btn-danger">Supprimer</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDelete(b.Id)">Supprimer</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+}
+
+@if (ShowDeleteModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Êtes-vous sûr de vouloir supprimer ce bet?
+                        <br />
+                        <strong>Cette action est irréversible.</strong>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CancelDelete">
+                        Annuler
+                    </button>
+                    <button class="btn btn-danger" @onclick="DeleteConfirmed">
+                        Supprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
@@ -68,5 +98,32 @@ else
         {
             ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
         }
+    }
+
+    private int? BetIdToDelete;
+    private bool ShowDeleteModal = false;
+
+    private void ConfirmDelete(int id)
+    {
+        BetIdToDelete = id;
+        ShowDeleteModal = true;
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        if (BetIdToDelete.HasValue)
+        {
+            await BetService.DeleteAsync(BetIdToDelete.Value);
+            bets = await BetService.GetAllAsync();
+        }
+
+        ShowDeleteModal = false;
+        BetIdToDelete = null;
+    }
+
+    private void CancelDelete()
+    {
+        ShowDeleteModal = false;
+        BetIdToDelete = null;
     }
 }

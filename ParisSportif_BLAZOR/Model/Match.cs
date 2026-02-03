@@ -29,11 +29,11 @@ public class Match
     public int ClubId1 { get; set; }
     [ForeignKey("ClubId1")]
     [InverseProperty("MatchesClub1")]
-    public Club Club1 { get; set; }
+    public Club? Club1 { get; set; }
     public int ClubId2 { get; set; }
     [ForeignKey("ClubId2")]
     [InverseProperty("MatchesClub2")]
-    public Club Club2 { get; set; }
+    public Club? Club2 { get; set; }
     public ICollection<Bet>? Bets { get; set; } = new List<Bet>();
 
 }
