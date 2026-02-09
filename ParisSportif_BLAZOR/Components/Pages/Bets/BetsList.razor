@@ -3,6 +3,7 @@
 @using ParisSportif_BLAZOR.Model
 @using ParisSportif_BLAZOR.Services
 @rendermode InteractiveServer
+@inject NavigationManager Navigation
 
 @inject BetService BetService
 
@@ -12,7 +13,7 @@
 
 @if (string.IsNullOrWhiteSpace(ErrorMessage))
 {
-    <button class="btn btn-sm btn-success me-1">Nouveau</button>
+    <button class="btn btn-sm btn-success me-1" @onclick="Add">Nouveau</button>
 }
 
 @if (bets == null || bets.Count == 0)
@@ -119,6 +120,11 @@ else
 
         ShowDeleteModal = false;
         BetIdToDelete = null;
+    }
+
+    private void Add()
+    {
+        Navigation.NavigateTo("/bets/create");
     }
 
     private void CancelDelete()

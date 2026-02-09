@@ -22,10 +22,24 @@ namespace ParisSportif_BLAZOR.Services
             return await _http.GetFromJsonAsync<Club>($"api/Clubs/{id}");
         }
 
-        public async Task<bool> AddAsync(Club club)
+        public async Task<ApiResult<Club>> AddAsync(Club club)
         {
             var response = await _http.PostAsJsonAsync("api/Clubs", club);
-            return response.IsSuccessStatusCode;
+            if (response.IsSuccessStatusCode)
+            {
+                var createdClub = await response.Content.ReadFromJsonAsync<Club>();
+                return new ApiResult<Club>
+                {
+                    Success = true,
+                    Data = createdClub
+                };
+            }
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            return new ApiResult<Club>
+            {
+                Success = false,
+                Error = errorMessage
+            };
         }
 
         public async Task<bool> UpdateAsync(Club club)

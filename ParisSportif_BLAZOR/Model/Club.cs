@@ -15,6 +15,7 @@ public class Club
     [Required]
     public string? Logo { get; set; }
     [Required]
+    [Range(1, 20, ErrorMessage = "Le classement doit être compris entre 1 et 20.")]
     public int Ranking { get; set; }
     public int LigueId { get; set; }
     [ForeignKey("LigueId")]

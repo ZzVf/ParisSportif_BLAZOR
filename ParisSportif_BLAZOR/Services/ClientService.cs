@@ -42,9 +42,19 @@ namespace ParisSportif_BLAZOR.Services
                 Error = errorMessage
             };
         }
+
         public async Task<bool> UpdateAsync(Client client)
         {
             var response = await _http.PutAsJsonAsync($"api/Clients/{client.Id}", client);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> UpdatePointsAsync(int clientId, int points)
+        {
+            var response = await _http.PutAsync(
+                $"api/Clients/{clientId}/points?points={points}",
+                null);
+
             return response.IsSuccessStatusCode;
         }
 

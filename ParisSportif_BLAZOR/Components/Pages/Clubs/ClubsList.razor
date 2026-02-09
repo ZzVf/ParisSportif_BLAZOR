@@ -3,12 +3,13 @@
 @using ParisSportif_BLAZOR.Model
 @using ParisSportif_BLAZOR.Services
 @rendermode InteractiveServer
-@inject ClubService ClubService;
+@inject ClubService ClubService
+@inject NavigationManager Navigation
 
 <h3>Clubs</h3>
 
 @if(string.IsNullOrWhiteSpace(ErrorMessage)) {
-  <button class="btn btn-sm btn-success me-1">Nouveau</button>
+  <button class="btn btn-sm btn-success me-1" @onclick="Add">Nouveau</button>
 }
 
 @if(clubs == null || clubs.Count == 0)
@@ -113,6 +114,11 @@ else{
 
         ShowDeleteModal = false;
         ClubIdToDelete = null;
+    }
+
+    private void Add()
+    {
+        Navigation.NavigateTo("/clubs/create");
     }
 
     private void CancelDelete()
