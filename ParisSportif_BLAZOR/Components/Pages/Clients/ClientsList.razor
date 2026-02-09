@@ -3,6 +3,7 @@
 @using ParisSportif_BLAZOR.Model
 @using ParisSportif_BLAZOR.Services
 @rendermode InteractiveServer
+@inject NavigationManager Navigation;
 
 @inject ClientService ClientService;
 
@@ -12,7 +13,7 @@
 
 @if (string.IsNullOrWhiteSpace(ErrorMessage))
 {
-    <button class="btn btn-sm btn-success me-1">Nouveau</button>
+    <button class="btn btn-sm btn-success me-1" @onclick="Add">Nouveau</button>
 }
 
 @if (clients == null || clients.Count == 0)
@@ -120,6 +121,11 @@ else
 
         ShowDeleteModal = false;
         ClientIdToDelete = null;
+    }
+
+    private void Add()
+    {
+        Navigation.NavigateTo("/clients/create");
     }
 
     private void CancelDelete()

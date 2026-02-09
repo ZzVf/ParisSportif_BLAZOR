@@ -19,13 +19,14 @@ public class Match
     [Key]
     public int Id { get; set; }
     [Required]
-    public int Score1 { get; set; }
+    public int Score1 { get; set; } = 0;
     [Required]
-    public int Score2 { get; set; }
-    public DateTime MatchDateTime { get; set; }
+    public int Score2 { get; set; } = 0;
+
+    public DateTime MatchDateTime { get; set; } = DateTime.Now;
     public bool isTopMatch { get; set; }
     [Required]
-    public MatchStatus matchStatus { get; set; }
+    public MatchStatus matchStatus { get; set; } = MatchStatus.Pending;
     public int ClubId1 { get; set; }
     [ForeignKey("ClubId1")]
     [InverseProperty("MatchesClub1")]

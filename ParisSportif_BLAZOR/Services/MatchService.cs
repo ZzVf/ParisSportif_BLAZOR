@@ -27,10 +27,27 @@ namespace ParisSportif_BLAZOR.Services
             return await _http.GetFromJsonAsync<List<Match>>($"api/Matches/club/{clubId}") ?? new List<Match>();
         }
 
-        public async Task<bool> AddAsync(Match match)
+        public async Task<ApiResult<Match>> AddAsync(Match match)
         {
             var response = await _http.PostAsJsonAsync("api/Matches", match);
-            return response.IsSuccessStatusCode;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var created = await response.Content.ReadFromJsonAsync<Match>();
+                return new ApiResult<Match>
+                {
+                    Success = true,
+                    Data = created
+                };
+            }
+
+            var errorMessage = await response.Content.ReadAsStringAsync();
+
+            return new ApiResult<Match>
+            {
+                Success = false,
+                Error = errorMessage
+            };
         }
 
         public async Task<bool> UpdateAsync(Match match)
