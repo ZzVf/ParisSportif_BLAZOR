@@ -1,0 +1,89 @@
+﻿@page "/clubs/create"
+@using ParisSportif_BLAZOR.Model
+@inject ParisSportif_BLAZOR.Services.ClubService ClubService
+@inject ParisSportif_BLAZOR.Services.LigueService LigueService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<h3>Ajouter un club</h3>
+
+<h2 style="color:red;">@ErrorMessage</h2>
+
+<EditForm Model="@club" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Nom</label>
+        <InputText class="form-control" @bind-Value="club.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Ligue</label>
+        <InputSelect class="form-control" @bind-Value="club.LigueId">
+            <option value="0">-- Choisir une ligue --</option>
+            @foreach (var ligue in ligues)
+            {
+                <option value="@ligue.Id">@ligue.Name</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Classement</label>
+        <InputNumber class="form-control" @bind-Value="club.Ranking" />
+    </div>
+
+    @* Ajout vrai logo *@
+    <div class="mb-3">
+        <label class="form-label">Logo</label>
+        <InputText class="form-control" @bind-Value="club.Logo" />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Enregistrer
+    </button>
+    <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">
+        Annuler
+    </button>
+</EditForm>
+
+@code {
+    private Club club = new Club();
+    private List<Ligue> ligues = new List<Ligue>();
+    string ErrorMessage="";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ligues = await LigueService.GetAllAsync();
+            Console.WriteLine("Ligues récupérées : " + ligues.Count);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard..." + e.Message;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        
+        var result = await ClubService.AddAsync(club);
+        
+        if (result.Success)
+        {
+            Navigation.NavigateTo("/clubs");
+            Console.WriteLine("Club créé avec succès : " + result.Data?.Id);
+        }
+        else
+        {
+            ErrorMessage = result.Error ?? "Erreur inconnue.";
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/clubs");
+    }
+}

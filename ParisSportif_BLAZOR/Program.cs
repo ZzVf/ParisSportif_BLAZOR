@@ -1,10 +1,22 @@
 using ParisSportif_BLAZOR.Components;
+using ParisSportif_BLAZOR.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpClient("API", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7034");
+});
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddSingleton<MatchService>();
+builder.Services.AddSingleton<BetService>();
+builder.Services.AddSingleton<ClientService>();
+builder.Services.AddSingleton<ClubService>();
+builder.Services.AddSingleton<LigueService>();
 
 var app = builder.Build();
 

@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using ProjectFootAPI.Model;
+using ParisSportif_BLAZOR.Model;
 
 namespace ParisSportif_BLAZOR.Services
 {
@@ -22,10 +22,25 @@ namespace ParisSportif_BLAZOR.Services
             return await _http.GetFromJsonAsync<Bet>($"api/Bets/{id}");
         }
 
-        public async Task<bool> AddAsync(Bet bet)
+        public async Task<ApiResult<Bet>> AddAsync(Bet bet)
         {
             var response = await _http.PostAsJsonAsync("api/Bets", bet);
-            return response.IsSuccessStatusCode;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<Bet>();
+                return new ApiResult<Bet>
+                {
+                    Success = true,
+                    Data = result
+                };
+            }
+
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            return new ApiResult<Bet>
+            {
+                Success = false,
+                Error = errorMessage
+            };
         }
 
         public async Task<bool> UpdateAsync(Bet bet)

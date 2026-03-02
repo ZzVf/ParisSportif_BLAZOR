@@ -1,104 +1,153 @@
-﻿@page "/matchs"
-@page "/matchslist"
+﻿@page "/matches"
+@page "/matcheslist"
+@using ParisSportif_BLAZOR.Services
+@using ParisSportif_BLAZOR.Model
+@rendermode InteractiveServer
+@inject MatchService MatchService
+@inject NavigationManager Navigation
 
 <h3>Matchs</h3>
 
-<button class="btn btn-sm btn-success me-1">Nouveau</button>
+<h2 style="color:red;">@ErrorMessage</h2>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Score 1</th>
-      <th scope="col">Score 2</th>
-      <th scope="col">Date & Heure</th>
-      <th scope="col">Top Match</th>
-      <th scope="col">Status</th>
-      <th scope="col">Club 1</th>
-      <th scope="col">Club 2</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
+@if(string.IsNullOrWhiteSpace(ErrorMessage)) {
+  <button class="btn btn-sm btn-success me-1" @onclick="Add">Nouveau</button>
+}
 
-  <tbody>
-    <tr>
-      <th scope="row">100</th>
-      <td>3</td>
-      <td>1</td>
-      <td>2025-03-12 20:45</td>
-      <td>true</td>
-      <td>1</td>
-      <td>10</td>
-      <td>11</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
+@if(matchs == null || matchs.Count == 0)
+{
+    <p>Aucun match à afficher...</p>
+}
+else{
+    <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Score 1</th>
+        <th scope="col">Score 2</th>
+        <th scope="col" @onclick="() => SortByDate()">Date & Heure</th>
+        <th scope="col">Top Match</th>
+        <th scope="col">Status</th>
+        <th scope="col">Club 1</th>
+        <th scope="col">Club 2</th>
+        <th scope="col">Ligue</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
 
-    <tr>
-      <th scope="row">101</th>
-      <td>1</td>
-      <td>1</td>
-      <td>2025-04-05 21:00</td>
-      <td>true</td>
-      <td>3</td>
-      <td>12</td>
-      <td>13</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
+    <tbody>
+      @foreach (var m in matchs)
+      {
+        <tr>
+          <th scope="row">@m.Id</th>
+          <td>@m.Score1</td>
+          <td>@m.Score2</td>
+          <td>@m.MatchDateTime</td>
+          <td>@(m.isTopMatch ? "Oui" : "Non")</td>
+          <td>@m.matchStatus</td>
+          <td>@m.Club1.Name</td>
+          <td>@m.Club2.Name</td>
+          <td>@m.Club1.Ligue?.Name</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1">Modifier</button>
+            <button class="btn btn-sm btn-danger me-1" @onclick="() => ConfirmDelete(m.Id)">Annuler</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
 
-    <tr>
-      <th scope="row">102</th>
-      <td>0</td>
-      <td>2</td>
-      <td>2025-05-18 18:30</td>
-      <td>false</td>
-      <td>2</td>
-      <td>11</td>
-      <td>10</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">103</th>
-      <td>0</td>
-      <td>0</td>
-      <td>2025-06-01 20:00</td>
-      <td>false</td>
-      <td>0</td>
-      <td>10</td>
-      <td>12</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">104</th>
-      <td>2</td>
-      <td>0</td>
-      <td>2025-07-11 17:00</td>
-      <td>false</td>
-      <td>4</td>
-      <td>13</td>
-      <td>11</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+@if (ShowDeleteModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Confirmation d'annulation</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Êtes-vous sûr de vouloir annuler ce match ?
+                        <br />
+                        <strong>Cette action est irréversible.</strong>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CancelDelete">
+                        Revenir en arrière
+                    </button>
+                    <button class="btn btn-danger" @onclick="DeleteConfirmed">
+                        Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
+  List<Match> matchs = new List<Match>();
+  string ErrorMessage = string.Empty;
 
+  private void SortByDate()
+  {
+      matchs = matchs.OrderBy(m => m.MatchDateTime).ToList();
+  }
+  private void SortById()
+  {
+      matchs = matchs.OrderBy(m => m.Id).ToList();
+  }
+  protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            matchs = await MatchService.GetAllAsync();
+            SortById();
+            Console.WriteLine("Matchs récupérés : " + matchs.Count);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
+
+        }
+    }
+
+  private int? MatchIdToDelete;
+    private bool ShowDeleteModal = false;
+
+    private void ConfirmDelete(int id)
+    {
+        MatchIdToDelete = id;
+        ShowDeleteModal = true;
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        if (MatchIdToDelete.HasValue)
+        {
+            await MatchService.CancelAsync(MatchIdToDelete.Value);
+            matchs = await MatchService.GetAllAsync();
+        }
+
+        ShowDeleteModal = false;
+        MatchIdToDelete = null;
+    }
+
+    private void CancelDelete()
+    {
+        ShowDeleteModal = false;
+        MatchIdToDelete = null;
+    }
+
+    private void Add()
+    {
+        Navigation.NavigateTo("/matches/create");
+    }
+
+    private void Edit(int id)
+    {
+        Navigation.NavigateTo($"/matches/edit/{id}"); 
+    }
 }

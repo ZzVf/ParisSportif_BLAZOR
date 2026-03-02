@@ -1,54 +1,143 @@
 ﻿@page "/clients"
 @page "/clientslist"
+@using ParisSportif_BLAZOR.Model
+@using ParisSportif_BLAZOR.Services
+@rendermode InteractiveServer
+@inject NavigationManager Navigation;
+
+@inject ClientService ClientService;
 
 <h3>Clients</h3>
 
-<button class="btn btn-sm btn-success me-1">Nouveau</button>
+<h2 style="color:red;">@ErrorMessage</h2>
 
-<table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">Id</th>
-          <th scope="col">Name</th>
-          <th scope="col">Password</th>
-          <th scope="col">CreationDate</th>
-          <th scope="col">Points</th>
-          <th scope="col">isBlocked</th>
-          <th scope="col">isAdmin</th>
-          <th scope="col">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">200</th>
-          <td>Andreas17</td>
-          <td>••••••••</td>
-          <td>—</td>
-          <td>500</td>
-          <td>false</td>
-          <td>false</td>
-          <td>
-            <button class="btn btn-sm btn-primary me-1">Modifier</button>
-            <button class="btn btn-sm btn-danger">Supprimer</button>
-          </td>
-        </tr>
+@if (string.IsNullOrWhiteSpace(ErrorMessage))
+{
+    <button class="btn btn-sm btn-success me-1" @onclick="Add">Nouveau</button>
+}
 
-        <tr>
-          <th scope="row">201</th>
-          <td>AdminUser</td>
-          <td>••••••••</td>
-          <td>—</td>
-          <td>1000</td>
-          <td>false</td>
-          <td>true</td>
-          <td>
-            <button class="btn btn-sm btn-primary me-1">Modifier</button>
-            <button class="btn btn-sm btn-danger">Supprimer</button>
-          </td>
-        </tr>
-      </tbody>
-</table>
+@if (clients == null || clients.Count == 0)
+{
+    <p>Aucun client à afficher...</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Password</th>
+                <th scope="col">CreationDate</th>
+                <th scope="col">Points</th>
+                <th scope="col">isBlocked</th>
+                <th scope="col">isAdmin</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in clients)
+            {
+                <tr>
+                    <th scope="row">@c.Id</th>
+                    <td>@c.Name</td>
+                    <td>••••••••</td>
+                    <td>@c.CreationDate.ToString("dd/MM/yyyy")</td>
+                    <td>@c.Points</td>
+                    <td>@c.isBlocked</td>
+                    <td>@c.isAdmin</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary me-1">Modifier</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDelete(c.Id)">Supprimer</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (ShowDeleteModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Êtes-vous sûr de vouloir supprimer ce client?
+                        <br />
+                        <strong>Cette action est irréversible.</strong>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CancelDelete">
+                        Annuler
+                    </button>
+                    <button class="btn btn-danger" @onclick="DeleteConfirmed">
+                        Supprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
+    List<Client> clients = new List<Client>();
+    string ErrorMessage = string.Empty;
 
+    private void SortById()
+    {
+        clients = clients.OrderBy(c => c.Id).ToList();
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            clients = await ClientService.GetAllAsync();
+            SortById();
+            Console.WriteLine("Clients récupérés : " + clients.Count);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
+        }
+    }
+
+    private int? ClientIdToDelete;
+    private bool ShowDeleteModal = false;
+
+    private void ConfirmDelete(int id)
+    {
+        ClientIdToDelete = id;
+        ShowDeleteModal = true;
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        if (ClientIdToDelete.HasValue)
+        {
+            await ClientService.DeleteAsync(ClientIdToDelete.Value);
+            clients = await ClientService.GetAllAsync();
+        }
+
+        ShowDeleteModal = false;
+        ClientIdToDelete = null;
+    }
+
+    private void Add()
+    {
+        Navigation.NavigateTo("/clients/create");
+    }
+
+    private void CancelDelete()
+    {
+        ShowDeleteModal = false;
+        ClientIdToDelete = null;
+    }
 }

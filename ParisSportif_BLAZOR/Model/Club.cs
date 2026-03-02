@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace ProjectFootAPI.Model;
+namespace ParisSportif_BLAZOR.Model;
 
 [Index(nameof(Ranking), nameof(LigueId), IsUnique = true)]
 public class Club
@@ -15,6 +15,7 @@ public class Club
     [Required]
     public string? Logo { get; set; }
     [Required]
+    [Range(1, 20, ErrorMessage = "Le classement doit être compris entre 1 et 20.")]
     public int Ranking { get; set; }
     public int LigueId { get; set; }
     [ForeignKey("LigueId")]

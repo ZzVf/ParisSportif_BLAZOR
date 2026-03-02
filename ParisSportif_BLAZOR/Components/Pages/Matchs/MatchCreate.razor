@@ -1,0 +1,110 @@
+﻿@page "/matches/create"
+@inject ParisSportif_BLAZOR.Services.MatchService MatchService
+@inject ParisSportif_BLAZOR.Services.ClubService ClubService
+@inject NavigationManager Navigation
+@using ParisSportif_BLAZOR.Model
+@rendermode InteractiveServer
+
+<h3>Ajouter un Match</h3>
+
+<h2 style="color:red;">@ErrorMessage</h2>
+
+<EditForm Model="@match" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Club Numéro 1</label>
+            <InputSelect class="form-control" @bind-Value="match.ClubId1">
+                <option value="0">-- Choisir un club --</option>
+                @foreach (var club in clubs)
+                {
+                    <option value="@club.Id">@club.Name</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => match.ClubId1)" />
+        </div>
+        
+        <div class="col-md-6">
+            <label class="form-label">Club Numéro 2</label>
+            <InputSelect class="form-control" @bind-Value="match.ClubId2">
+                <option value="0">-- Choisir un club --</option>
+                @foreach (var club in clubs)
+                {
+                    <option value="@club.Id">@club.Name</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => match.ClubId2)" />
+        </div>
+    </div>
+
+    
+
+    <div class="col mb-3">
+        <label class="form-label">Top match : </label>
+        <InputCheckbox class="form-check-input" @bind-Value="match.isTopMatch" />
+        <ValidationMessage For="@(() => match.isTopMatch)" />
+    </div>
+
+    <div class="col mb-3">
+        <label class="form-label">Date</label>
+        <input type="datetime-local"
+           class="form-control"
+           @bind="match.MatchDateTime" />
+    
+        <ValidationMessage For="@(() => match.MatchDateTime)" />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Enregistrer
+    </button>
+    <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">
+        Annuler
+    </button>
+</EditForm>
+
+@code {
+    private Match match = new();
+    private List<Club> clubs = new();
+    string ErrorMessage="";
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            clubs = await ClubService.GetAllAsync();
+            Console.WriteLine("Clubs récupérés : " + clubs.Count);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard..." + e.Message;
+
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if(match.MatchDateTime <= DateTime.Now)
+        {
+            ErrorMessage = "La date du match doit être dans le futur.";
+            return;
+        }
+        var result = await MatchService.AddAsync(match);
+
+        if (result.Success)
+        {
+            Navigation.NavigateTo("/matches");
+            Console.WriteLine("Match créé avec succès : " + result.Data?.Id);
+        }
+        else
+        {
+            ErrorMessage = result.Error ?? "Erreur inconnue.";
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/matches");
+    }
+}

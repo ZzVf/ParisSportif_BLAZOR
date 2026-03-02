@@ -1,52 +1,141 @@
 ﻿@page "/bets"
 @page "/betlist"
+@using ParisSportif_BLAZOR.Model
+@using ParisSportif_BLAZOR.Services
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+@inject BetService BetService
 
 <h3>Bets</h3>
 
-<button class="btn btn-sm btn-success me-1">Nouveau</button>
+<h2 style="color:red;">@ErrorMessage</h2>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Point</th>
-      <th scope="col">Status</th>
-      <th scope="col">Prediction</th>
-      <th scope="col">ClientId</th>
-      <th scope="col">MatchId</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
+@if (string.IsNullOrWhiteSpace(ErrorMessage))
+{
+    <button class="btn btn-sm btn-success me-1" @onclick="Add">Nouveau</button>
+}
 
-  <tbody>
-    <tr>
-      <th scope="row">300</th>
-      <td>50</td>
-      <td>0</td>
-      <td>0</td>
-      <td>200</td>
-      <td>100</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
+@if (bets == null || bets.Count == 0)
+{
+    <p>Aucun bet à afficher...</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Point</th>
+                <th scope="col">Status</th>
+                <th scope="col">Prediction</th>
+                <th scope="col">Client</th>
+                <th scope="col">Match</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
 
-    <tr>
-      <th scope="row">301</th>
-      <td>100</td>
-      <td>1</td>
-      <td>2</td>
-      <td>201</td>
-      <td>101</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+        <tbody>
+            @foreach (var b in bets)
+            {
+                <tr>
+                    <th scope="row">@b.Id</th>
+                    <td>@b.Point</td>
+                    <td>@b.Status</td>
+                    <td>@b.Prediction</td>
+                    <td>@b.ClientId</td>
+                    <td>@b.MatchId</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary me-1">Modifier</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDelete(b.Id)">Supprimer</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (ShowDeleteModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Êtes-vous sûr de vouloir supprimer ce bet?
+                        <br />
+                        <strong>Cette action est irréversible.</strong>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CancelDelete">
+                        Annuler
+                    </button>
+                    <button class="btn btn-danger" @onclick="DeleteConfirmed">
+                        Supprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
+    List<Bet> bets = new List<Bet>();
+    string ErrorMessage = string.Empty;
+    private void SortById()
+    {
+        bets = bets.OrderBy(b => b.Id).ToList();
+    } 
 
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            bets = await BetService.GetAllAsync();
+            SortById();
+            Console.WriteLine("Bets récupérés : " + bets.Count);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
+        }
+    }
+
+    private int? BetIdToDelete;
+    private bool ShowDeleteModal = false;
+
+    private void ConfirmDelete(int id)
+    {
+        BetIdToDelete = id;
+        ShowDeleteModal = true;
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        if (BetIdToDelete.HasValue)
+        {
+            await BetService.DeleteAsync(BetIdToDelete.Value);
+            bets = await BetService.GetAllAsync();
+        }
+
+        ShowDeleteModal = false;
+        BetIdToDelete = null;
+    }
+
+    private void Add()
+    {
+        Navigation.NavigateTo("/bets/create");
+    }
+
+    private void CancelDelete()
+    {
+        ShowDeleteModal = false;
+        BetIdToDelete = null;
+    }
 }

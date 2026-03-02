@@ -1,0 +1,69 @@
+﻿@page "/ligues/edit/{id:int}"
+@using ParisSportif_BLAZOR.Model
+@using ParisSportif_BLAZOR.Services
+@inject LigueService LigueService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<h3>Modification d'une ligue</h3>
+
+<h2 style="color:red;">@ErrorMessage</h2>
+
+@if (ligue == null)
+{
+    <p>Chargement...</p>
+}
+else
+{
+    <EditForm Model="@ligue" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Nom de la ligue</label>
+            <InputText class="form-control" @bind-Value="ligue.Name" />
+            <ValidationMessage For="@(() => ligue.Name)" />
+        </div>
+
+        @* Ajout vrai logo *@
+        <div class="mb-3">
+            <label class="form-label">Logo</label>
+            <InputText class="form-control" @bind-Value="ligue.Logo" />
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            Enregistrer
+        </button>
+        <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">
+            Annuler
+        </button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Ligue? ligue;
+    string ErrorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        ligue = await LigueService.GetAsync(Id);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var success = await LigueService.UpdateAsync(ligue!);
+
+        if (success)
+            Navigation.NavigateTo("/ligues");
+        else
+            ErrorMessage = "Erreur lors de la modification.";
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/ligues");
+    }
+}

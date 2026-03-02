@@ -1,16 +1,16 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ProjectFootAPI.Model;
+namespace ParisSportif_BLAZOR.Model;
 
 public class Client
 {
     [Key]
     public int Id { get; set; }
     [Required, MaxLength(50)]
-    public string Name { get; set; }
+    public string? Name { get; set; }
     [Required, MaxLength(50)]
-    public string Password { get; set; }
+    public string? Password { get; set; }
     public DateTime CreationDate { get; set; } = DateTime.Now;
     public int Points { get; set; } = 500;
     public bool isBlocked { get; set; }

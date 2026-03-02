@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ProjectFootAPI.Model;
+namespace ParisSportif_BLAZOR.Model;
 
 public class Ligue
 {

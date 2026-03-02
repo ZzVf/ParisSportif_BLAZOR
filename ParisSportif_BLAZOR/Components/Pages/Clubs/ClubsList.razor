@@ -1,74 +1,140 @@
 ﻿@page "/clubs"
 @page "/clubslist"
+@using ParisSportif_BLAZOR.Model
+@using ParisSportif_BLAZOR.Services
+@rendermode InteractiveServer
+@inject ClubService ClubService
+@inject NavigationManager Navigation
 
 <h3>Clubs</h3>
 
-<button class="btn btn-sm btn-success me-1">Nouveau</button>
+@if(string.IsNullOrWhiteSpace(ErrorMessage)) {
+  <button class="btn btn-sm btn-success me-1" @onclick="Add">Nouveau</button>
+}
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Name</th>
-      <th scope="col">Logo</th>
-      <th scope="col">Ranking</th>
-      <th scope="col">LigueId</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
+@if(clubs == null || clubs.Count == 0)
+{
+    <p>Aucun club à afficher...</p>
+}
+else{
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">Logo</th>
+        <th scope="col">Ranking</th>
+        <th scope="col" @onclick="() => SortByLigueAndRanking()">LigueId</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+  
+    <tbody>
+      @foreach (var c in clubs)
+      {
+        <tr>
+          <th scope="row">@c.Id</th>
+          <td>@c.Name</td>
+          <td>@c.Logo</td>
+          <td>@c.Ranking</td>
+          <td>@c.LigueId</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1">Modifier</button>
+            <button class="btn btn-sm btn-danger me-1" @onclick="() => ConfirmDelete(c.Id)">Supprimer</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
 
-  <tbody>
-    <tr>
-      <th scope="row">10</th>
-      <td>Manchester City</td>
-      <td>mancity.png</td>
-      <td>1</td>
-      <td>1</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">11</th>
-      <td>Liverpool FC</td>
-      <td>liverpool.png</td>
-      <td>2</td>
-      <td>1</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">12</th>
-      <td>Real Madrid</td>
-      <td>realmadrid.png</td>
-      <td>1</td>
-      <td>2</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-
-    <tr>
-      <th scope="row">13</th>
-      <td>FC Barcelona</td>
-      <td>barcelona.png</td>
-      <td>2</td>
-      <td>2</td>
-      <td>
-        <button class="btn btn-sm btn-primary me-1">Modifier</button>
-        <button class="btn btn-sm btn-danger">Supprimer</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+@if (ShowDeleteModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close" @onclick="CancelDelete"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Êtes-vous sûr de vouloir supprimer ce club?
+                        <br />
+                        <strong>Cette action est irréversible.</strong>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CancelDelete">
+                        Annuler
+                    </button>
+                    <button class="btn btn-danger" @onclick="DeleteConfirmed">
+                        Supprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
+  List<Club> clubs = new List<Club>();
+  string ErrorMessage = string.Empty;
 
+  private void SortByLigueAndRanking()
+  {
+      clubs = clubs.OrderBy(c => c.LigueId).ThenBy(c => c.Ranking).ToList();
+  }
+
+  private void SortById()
+  {
+      clubs = clubs.OrderBy(c => c.Id).ToList();
+  }
+
+  protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            clubs = await ClubService.GetAllAsync();
+            SortById();
+            Console.WriteLine("Clubs récupérés : " + clubs.Count);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
+
+        }
+    }
+
+    private int? ClubIdToDelete;
+    private bool ShowDeleteModal = false;
+
+    private void ConfirmDelete(int id)
+    {
+        ClubIdToDelete = id;
+        ShowDeleteModal = true;
+    }
+
+    private async Task DeleteConfirmed()
+    {
+        if (ClubIdToDelete.HasValue)
+        {
+            await ClubService.DeleteAsync(ClubIdToDelete.Value);
+            clubs = await ClubService.GetAllAsync();
+        }
+
+        ShowDeleteModal = false;
+        ClubIdToDelete = null;
+    }
+
+    private void Add()
+    {
+        Navigation.NavigateTo("/clubs/create");
+    }
+
+    private void CancelDelete()
+    {
+        ShowDeleteModal = false;
+        ClubIdToDelete = null;
+    }
 }
