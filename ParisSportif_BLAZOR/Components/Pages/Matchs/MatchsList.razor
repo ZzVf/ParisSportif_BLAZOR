@@ -28,7 +28,7 @@ else{
         <th scope="col" @onclick="() => SortByDate()">Date & Heure</th>
         <th scope="col">Top Match</th>
         <th scope="col">Status</th>
-        <th scope="col" @onclick="() => SortByClub1()">Club 1</th>
+        <th scope="col">Club 1</th>
         <th scope="col">Club 2</th>
         <th scope="col">Ligue</th>
         <th scope="col">Actions</th>
@@ -95,15 +95,16 @@ else{
   {
       matchs = matchs.OrderBy(m => m.MatchDateTime).ToList();
   }
-  private void SortByClub1()
+  private void SortById()
   {
-      matchs = matchs.OrderBy(m => m.Club1.Name).ToList();
+      matchs = matchs.OrderBy(m => m.Id).ToList();
   }
   protected override async Task OnInitializedAsync()
     {
         try
         {
             matchs = await MatchService.GetAllAsync();
+            SortById();
             Console.WriteLine("Matchs récupérés : " + matchs.Count);
         }
         catch (Exception e)

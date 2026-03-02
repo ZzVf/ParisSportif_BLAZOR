@@ -89,11 +89,18 @@ else
     List<Client> clients = new List<Client>();
     string ErrorMessage = string.Empty;
 
+    private void SortById()
+    {
+        clients = clients.OrderBy(c => c.Id).ToList();
+    }
+
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             clients = await ClientService.GetAllAsync();
+            SortById();
             Console.WriteLine("Clients récupérés : " + clients.Count);
         }
         catch (Exception e)

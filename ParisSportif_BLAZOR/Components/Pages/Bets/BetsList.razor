@@ -87,12 +87,18 @@ else
 @code {
     List<Bet> bets = new List<Bet>();
     string ErrorMessage = string.Empty;
+    private void SortById()
+    {
+        bets = bets.OrderBy(b => b.Id).ToList();
+    } 
+
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             bets = await BetService.GetAllAsync();
+            SortById();
             Console.WriteLine("Bets récupérés : " + bets.Count);
         }
         catch (Exception e)

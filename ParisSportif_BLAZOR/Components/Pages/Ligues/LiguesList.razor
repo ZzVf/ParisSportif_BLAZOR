@@ -3,6 +3,7 @@
 @using ParisSportif_BLAZOR.Services
 @using ParisSportif_BLAZOR.Model
 @rendermode InteractiveServer
+@inject NavigationManager Navigation;
 @inject LigueService LigueService;
 
 <h3>Ligues</h3>
@@ -36,7 +37,7 @@ else{
           <td>@l.Name</td>
           <td>@l.Logo</td>
           <td>
-            <button class="btn btn-sm btn-primary me-1">Modifier</button>
+            <button class="btn btn-sm btn-primary me-1" @onclick="() => Edit(l.Id)" >Modifier</button>
             <button class="btn btn-sm btn-danger me-1" @onclick="() => ConfirmDelete(l.Id)">Supprimer</button>
           </td>
         </tr>
@@ -78,11 +79,17 @@ else{
   List<Ligue> ligues = new List<Ligue>();
   string ErrorMessage = string.Empty;
 
+  private void SortById()
+  {
+      ligues = ligues.OrderBy(l => l.Id).ToList();
+  }
+
   protected override async Task OnInitializedAsync()
     {
         try
         {
             ligues = await LigueService.GetAllAsync();
+            SortById();
             Console.WriteLine("Ligues récupérés : " + ligues.Count);
         }
         catch (Exception e)
@@ -113,7 +120,16 @@ else{
         LigueIdToDelete = null;
     }
 
-    private void CancelDelete()
+    private void Add()
+    {
+        Navigation.NavigateTo("/ligues/create");
+    }
+
+    private void Edit(int id)
+    {
+        Navigation.NavigateTo($"/ligues/edit/{id}");
+    }
+     private void CancelDelete()
     {
         ShowDeleteModal = false;
         LigueIdToDelete = null;

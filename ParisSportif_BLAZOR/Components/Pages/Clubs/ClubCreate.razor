@@ -34,7 +34,11 @@
         <InputNumber class="form-control" @bind-Value="club.Ranking" />
     </div>
 
-    //AJOUT LOGO
+    @* Ajout vrai logo *@
+    <div class="mb-3">
+        <label class="form-label">Logo</label>
+        <InputText class="form-control" @bind-Value="club.Logo" />
+    </div>
 
     <button type="submit" class="btn btn-success">
         Enregistrer
@@ -66,7 +70,7 @@
     {
         
         var result = await ClubService.AddAsync(club);
-
+        
         if (result.Success)
         {
             Navigation.NavigateTo("/clubs");

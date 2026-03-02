@@ -24,7 +24,7 @@ else{
         <th scope="col">Name</th>
         <th scope="col">Logo</th>
         <th scope="col">Ranking</th>
-        <th scope="col">LigueId</th>
+        <th scope="col" @onclick="() => SortByLigueAndRanking()">LigueId</th>
         <th scope="col">Actions</th>
       </tr>
     </thead>
@@ -81,11 +81,22 @@ else{
   List<Club> clubs = new List<Club>();
   string ErrorMessage = string.Empty;
 
+  private void SortByLigueAndRanking()
+  {
+      clubs = clubs.OrderBy(c => c.LigueId).ThenBy(c => c.Ranking).ToList();
+  }
+
+  private void SortById()
+  {
+      clubs = clubs.OrderBy(c => c.Id).ToList();
+  }
+
   protected override async Task OnInitializedAsync()
     {
         try
         {
             clubs = await ClubService.GetAllAsync();
+            SortById();
             Console.WriteLine("Clubs récupérés : " + clubs.Count);
         }
         catch (Exception e)
