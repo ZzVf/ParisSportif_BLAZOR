@@ -1,0 +1,99 @@
+﻿@page "/clients/edit/{Id:int}"
+@using ParisSportif_BLAZOR.Model
+@inject ParisSportif_BLAZOR.Services.ClientService ClientService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<h3>Modification d'un client</h3>
+
+<h2 style="color:red;">@ErrorMessage</h2>
+
+@if (client == null)
+{
+    <p>Chargement du client...</p>
+}
+else
+{
+    <EditForm Model="@client" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Nom</label>
+            <InputText class="form-control" @bind-Value="client.Name" />
+            <ValidationMessage For="@(() => client.Name)" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Mot de passe</label>
+            <InputText class="form-control" @bind-Value="client.Password" />
+            <ValidationMessage For="@(() => client.Password)" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Points</label>
+            <InputNumber class="form-control" @bind-Value="client.Points" />
+            <ValidationMessage For="@(() => client.Points)" />
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">Bloqué</label>
+                <InputCheckbox class="form-check-input" @bind-Value="client.isBlocked" />
+                <ValidationMessage For="@(() => client.isBlocked)" />
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Admin</label>
+                <InputCheckbox class="form-check-input" @bind-Value="client.isAdmin" />
+                <ValidationMessage For="@(() => client.isAdmin)" />
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            Enregistrer
+        </button>
+        <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">
+            Annuler
+        </button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Client? client;
+    string ErrorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            client = await ClientService.GetAsync(Id);
+            Console.WriteLine("Client récupéré avec succès : " + client?.Id);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
+        }
+    }
+    
+    private async Task HandleValidSubmit()
+    {
+        var success = await ClientService.UpdateAsync(client);
+        if (success)
+        {
+            Navigation.NavigateTo("/clients");
+            Console.WriteLine("Client mis à jour avec succès : " + client?.Id);
+        }
+        else
+        {
+            ErrorMessage = "Erreur lors de la mise à jour du client. Veuillez réessayer.";
+        }
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/clients");
+    }
+}

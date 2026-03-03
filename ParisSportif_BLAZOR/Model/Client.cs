@@ -12,6 +12,7 @@ public class Client
     [Required, MaxLength(50)]
     public string? Password { get; set; }
     public DateTime CreationDate { get; set; } = DateTime.Now;
+    [Range(0, int.MaxValue, ErrorMessage = "Les points ne peuvent pas être négatifs.")]
     public int Points { get; set; } = 500;
     public bool isBlocked { get; set; }
     public bool isAdmin { get; set; }

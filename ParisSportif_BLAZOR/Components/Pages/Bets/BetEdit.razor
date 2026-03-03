@@ -1,0 +1,147 @@
+﻿@page "/bets/edit/{id:int}"
+@using ParisSportif_BLAZOR.Model
+@using ParisSportif_BLAZOR.Services
+@inject BetService betService
+@inject MatchService matchService
+@inject ClientService clientService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<h3>Modification d'un bet</h3>
+
+<h2 style="color:red;">@ErrorMessage</h2>
+
+@if(bet == null)
+{
+    <p>Chargement...</p>
+}
+else
+{
+    <EditForm Model="@bet" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="client" class="form-label">Client</label>
+        <InputSelect id="client" class="form-select" @bind-Value="bet.ClientId">
+            <option value="">-- Sélectionnez un client --</option>
+            @foreach (var client in clients)
+            {
+                <option value="@client.Id">@client.Name</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label for="match" class="form-label">Match</label>
+        <InputSelect id="match" class="form-select" @bind-Value="bet.MatchId">
+            <option value="">-- Sélectionnez un match --</option>
+            @foreach (var match in matches)
+            {
+                <option value="@match.Id">@match.Club1?.Name vs @match.Club2?.Name</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label for="match" class="form-label">Match</label>
+        <InputSelect id="prediction" class="form-select" @bind-Value="bet.Prediction">
+            <option value="">-- Sélectionnez une prédiction --</option>
+            @foreach (var type in Enum.GetValues<BetPrediction>())
+            {
+                <option value="@type">@type</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label for="point" class="form-label">Point</label>
+        <InputNumber id="point" class="form-control" @bind-Value="bet.Point" />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Enregistrer
+    </button>
+    <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">
+        Annuler
+    </button>
+</EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Bet bet = new Bet();
+    private List<Match> matches = new List<Match>();
+    private List<Client> clients = new List<Client>();
+    private int basePoint;
+    string ErrorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            bet = await betService.GetAsync(Id);
+            basePoint = bet.Point;
+            matches = await matchService.GetAllAsync();
+            clients = await clientService.GetAllAsync();
+            Console.WriteLine("Matchs récupérés : " + matches.Count);
+            Console.WriteLine("Clients récupérés : " + clients.Count);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Erreur lors du chargement du bet : {ex.Message}";
+        }
+    }
+
+    private async Task HandleValidSubmit()
+{
+    try
+    {
+        var selectedClient = clients.FirstOrDefault(c => c.Id == bet.ClientId);
+        if (selectedClient is null)
+        {
+            ErrorMessage = "Client introuvable.";
+            return;
+        }
+
+        // delta > 0 : le nouveau bet coûte plus (on retire des points)
+        // delta < 0 : le nouveau bet coûte moins (on rend des points)
+        int delta = bet.Point - basePoint;
+        int newPoints = selectedClient.Points - delta;
+
+        if (newPoints < 0)
+        {
+            ErrorMessage = "Le client n'a pas assez de points.";
+            return;
+        }
+
+        var betUpdated = await betService.UpdateAsync(bet);
+        if (!betUpdated)
+        {
+            ErrorMessage = "Erreur lors de la mise à jour du bet.";
+            return;
+        }
+
+        var pointsUpdated = await clientService.UpdatePointsAsync(selectedClient.Id, newPoints);
+        if (!pointsUpdated)
+        {
+            ErrorMessage = "Bet mis à jour, mais erreur lors de la mise à jour des points.";
+            return;
+        }
+
+        selectedClient.Points = newPoints;
+        Navigation.NavigateTo("/bets");
+    }
+    catch (Exception ex)
+    {
+        ErrorMessage = $"Erreur lors de la mise à jour du bet : {ex.Message}";
+    }
+}
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/bets");
+    }
+}

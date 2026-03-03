@@ -47,7 +47,7 @@ else
                     <td>@c.isBlocked</td>
                     <td>@c.isAdmin</td>
                     <td>
-                        <button class="btn btn-sm btn-primary me-1">Modifier</button>
+                        <button class="btn btn-sm btn-primary me-1" @onclick="() => Edit(c.Id)">Modifier</button>
                         <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDelete(c.Id)">Supprimer</button>
                     </td>
                 </tr>
@@ -133,6 +133,11 @@ else
     private void Add()
     {
         Navigation.NavigateTo("/clients/create");
+    }
+
+    private void Edit(int id)
+    {
+        Navigation.NavigateTo($"/clients/edit/{id}");
     }
 
     private void CancelDelete()

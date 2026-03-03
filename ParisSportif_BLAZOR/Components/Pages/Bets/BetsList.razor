@@ -46,7 +46,7 @@ else
                     <td>@b.ClientId</td>
                     <td>@b.MatchId</td>
                     <td>
-                        <button class="btn btn-sm btn-primary me-1">Modifier</button>
+                        <button class="btn btn-sm btn-primary me-1" @onclick="() => Edit(b.Id)">Modifier</button>
                         <button class="btn btn-sm btn-danger" @onclick="() => ConfirmDelete(b.Id)">Supprimer</button>
                     </td>
                 </tr>
@@ -131,6 +131,11 @@ else
     private void Add()
     {
         Navigation.NavigateTo("/bets/create");
+    }
+
+    private void Edit(int id)
+    {
+        Navigation.NavigateTo($"/bets/edit/{id}");
     }
 
     private void CancelDelete()

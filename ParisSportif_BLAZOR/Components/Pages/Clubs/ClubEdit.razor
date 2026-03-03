@@ -1,0 +1,96 @@
+﻿@page "/clubs/edit/{id:int}"
+@using ParisSportif_BLAZOR.Model
+@using ParisSportif_BLAZOR.Services
+@inject ClubService ClubService
+@inject LigueService LigueService
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<h3>Modification d'une ligue</h3>
+
+<h2 style="color:red;">@ErrorMessage</h2>
+
+@if (club == null)
+{
+    <p>Chargement...</p>
+}
+else
+{
+    <EditForm Model="@club" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Nom</label>
+            <InputText class="form-control" @bind-Value="club.Name" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Ligue</label>
+            <InputSelect class="form-control" @bind-Value="club.LigueId">
+                <option value="0">-- Choisir une ligue --</option>
+                @foreach (var ligue in ligues)
+                {
+                    <option value="@ligue.Id">@ligue.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Classement</label>
+            <InputNumber class="form-control" @bind-Value="club.Ranking" />
+        </div>
+
+        @* Ajout vrai logo *@
+        <div class="mb-3">
+            <label class="form-label">Logo</label>
+            <InputText class="form-control" @bind-Value="club.Logo" />
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            Enregistrer
+        </button>
+        <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">
+            Annuler
+        </button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Club? club;
+    private List<Ligue> ligues = new List<Ligue>();
+    string ErrorMessage = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ligues = await LigueService.GetAllAsync();
+            club = await ClubService.GetAsync(Id);
+            Console.WriteLine("Club récupéré : " + club?.Name);
+            Console.WriteLine("Ligues récupérées : " + ligues.Count);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard..." + e.Message;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var success = await ClubService.UpdateAsync(club!);
+
+        if (success)
+            Navigation.NavigateTo("/clubs");
+        else
+            ErrorMessage = "Erreur lors de la modification.";
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/clubs");
+    }
+}

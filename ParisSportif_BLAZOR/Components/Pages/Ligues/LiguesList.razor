@@ -11,7 +11,7 @@
 <h2 style="color:red;">@ErrorMessage</h2>
 
 @if(string.IsNullOrWhiteSpace(ErrorMessage)) {
-  <button class="btn btn-sm btn-success me-1">Nouveau</button>
+  <button class="btn btn-sm btn-success me-1" @onclick="Add">Nouveau</button>
 }
 
 @if(ligues == null || ligues.Count == 0)

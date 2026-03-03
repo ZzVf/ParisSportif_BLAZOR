@@ -49,7 +49,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        ligue = await LigueService.GetAsync(Id);
+        try
+        {
+            ligue = await LigueService.GetAsync(Id);    
+            Console.WriteLine("Ligue récupérée : " + ligue?.Name);
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard..." + e.Message;
+        }
     }
 
     private async Task HandleValidSubmit()

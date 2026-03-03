@@ -24,7 +24,7 @@ namespace ParisSportif_BLAZOR.Model
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required, Range(1, int.MaxValue, ErrorMessage = "Doit être supérieur à 0")]
         public int Point { get; set; }
 
         public DateTime BetTiming { get; set; } = DateTime.Now;
