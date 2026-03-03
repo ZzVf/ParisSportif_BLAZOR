@@ -4,21 +4,55 @@
 @using ParisSportif_BLAZOR.Model
 @rendermode InteractiveServer
 @inject MatchService MatchService
+@inject ClubService ClubService
 @inject NavigationManager Navigation
 
-<h3>Matchs</h3>
+<div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <h3>Matchs</h3>
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <div class="row align-items-end">
+
+            <div class="col-md-2">
+
+                @if(string.IsNullOrWhiteSpace(ErrorMessage)) {
+                    <button class="btn btn-sm btn-success me-1" @onclick="Add">
+                        Nouveau
+                    </button>
+                }   
+            </div>
+
+            <div class="col-md-8">
+                <label class="form-label">Club recherché</label>
+                <InputSelect class="form-control" @bind-Value="selectedClubId">
+                    <option value="0">-- Choisir un club --</option>
+                    @foreach (var club in clubs)
+                    {
+                        <option value="@club.Id">@club.Name</option>
+                    }
+                </InputSelect>
+            </div>
+
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
+
 
 <h2 style="color:red;">@ErrorMessage</h2>
-
-@if(string.IsNullOrWhiteSpace(ErrorMessage)) {
-  <button class="btn btn-sm btn-success me-1" @onclick="Add">Nouveau</button>
-}
 
 @if(matchs == null || matchs.Count == 0)
 {
     <p>Aucun match à afficher...</p>
 }
 else{
+  
     <table class="table table-striped">
     <thead>
       <tr>
@@ -89,7 +123,10 @@ else{
 
 @code {
   List<Match> matchs = new List<Match>();
+  List<Club> clubs = new List<Club>();
   string ErrorMessage = string.Empty;
+  int selectedClubId;
+  
 
   private void SortByDate()
   {
@@ -105,12 +142,28 @@ else{
         {
             matchs = await MatchService.GetAllAsync();
             SortById();
+            clubs = await ClubService.GetAllAsync();
+            Console.WriteLine("Clubs récupérés : " + clubs.Count);
             Console.WriteLine("Matchs récupérés : " + matchs.Count);
         }
         catch (Exception e)
         {
             ErrorMessage = "Erreur d'accès à l'API, essayez de recharger la page plus tard... " + e.Message;
 
+        }
+    }
+
+    private async Task OnClubSelected(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int clubId) && clubId != 0)
+        {
+            selectedClubId = clubId;
+            matchs = await MatchService.GetByClubIdAsync(clubId);
+        }
+        else
+        {
+            selectedClubId = 0;
+            matchs = await MatchService.GetAllAsync();
         }
     }
 
