@@ -41,10 +41,15 @@ else
             <InputNumber class="form-control" @bind-Value="club.Ranking" />
         </div>
 
-        @* Ajout vrai logo *@
         <div class="mb-3">
             <label class="form-label">Logo</label>
-            <InputText class="form-control" @bind-Value="club.Logo" />
+            <InputFile class="form-control" OnChange="HandleFileSelected" />
+            @if (!string.IsNullOrEmpty(club.Logo))
+            {
+                <div class="mt-2">
+                    <img src="@club.Logo" alt="Logo" style="max-width:200px; border:1px solid #ccc; padding:5px;" />
+                </div>
+            }
         </div>
 
         <button type="submit" class="btn btn-success">
@@ -64,6 +69,8 @@ else
     private List<Ligue> ligues = new List<Ligue>();
     string ErrorMessage = "";
 
+    IBrowserFile? file;
+
     protected override async Task OnInitializedAsync()
     {
         try
@@ -81,12 +88,39 @@ else
 
     private async Task HandleValidSubmit()
     {
+
+            // Limite de taille
+            var maxSize = 10_000_000;
+            await using var stream = file.OpenReadStream(maxSize);
+        
+            // Générer un nom unique pour éviter les collisions
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.Name)}";
+            // Mettre à jour le chemin relatif pour l'affichage
+            club.Logo = $"images\\clubs\\{fileName}";
+            // Chemin complet côté serveur
+            var savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "clubs", fileName);
+
+            // Copier le fichier dans wwwroot/images
+            await using var fileStream = new FileStream(savePath, FileMode.Create);
+            await stream.CopyToAsync(fileStream);
+
+            
         var success = await ClubService.UpdateAsync(club!);
 
-        if (success)
+        if (success){
+            
+
             Navigation.NavigateTo("/clubs");
+        }
         else
             ErrorMessage = "Erreur lors de la modification.";
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs args)
+    {
+        file = args.File;
+        club.Logo = file.";
+
     }
 
     private void Cancel()

@@ -36,8 +36,14 @@
     </div>
 
     <div class="mb-3">
-        <label for="formFile" class="form-label">Logo</label>
-        <input class="form-control" type="file" @bind-value="club.Logo"/>
+        <label class="form-label">Logo</label>
+        <InputFile class="form-control" OnChange="HandleFileSelected" />
+        @if (!string.IsNullOrEmpty(club.Logo))
+        {
+            <div class="mt-2">
+                <img src="@club.Logo" alt="Logo" width="50" height="50" />
+            </div>
+        }
     </div>
 
     <button type="submit" class="btn btn-success">
@@ -68,7 +74,6 @@
 
     private async Task HandleValidSubmit()
     {
-        club.Logo = "images\\"+Path.GetFileName(club.Logo) ; // Placeholder pour le logo, à remplacer par la logique de téléchargement de fichier
         var result = await ClubService.AddAsync(club);
         
         if (result.Success)
@@ -80,6 +85,30 @@
         {
             ErrorMessage = result.Error ?? "Erreur inconnue.";
         }
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs args)
+    {
+        var file = args.File;
+
+
+        // Limite de taille
+        var maxSize = 10_000_000;
+        await using var stream = file.OpenReadStream(maxSize);
+       
+        // Générer un nom unique pour éviter les collisions
+        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.Name)}";
+
+        // Chemin complet côté serveur
+        var savePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "clubs", fileName);
+
+        // Copier le fichier dans wwwroot/images
+        await using var fileStream = new FileStream(savePath, FileMode.Create);
+        await stream.CopyToAsync(fileStream);
+
+        // Mettre à jour le chemin relatif pour l'affichage
+        club.Logo = $"images\\clubs\\{fileName}";
+
     }
 
     private void Cancel()
