@@ -7,14 +7,32 @@
 
 @inject ClientService ClientService;
 
-<h3>Clients</h3>
+<div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <h3>Clients</h3>
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <div class="row align-items-end">
+
+            <div class="col-md-3">
+            @if(string.IsNullOrWhiteSpace(ErrorMessage)) {
+                <button class="btn btn-success btn-lg w-100" @onclick="Add">
+                    Nouveau
+                </button>
+            }   
+
+            </div>
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
 
 <h2 style="color:red;">@ErrorMessage</h2>
-
-@if (string.IsNullOrWhiteSpace(ErrorMessage))
-{
-    <button class="btn btn-sm btn-success me-1" @onclick="Add">Nouveau</button>
-}
 
 @if (clients == null || clients.Count == 0)
 {

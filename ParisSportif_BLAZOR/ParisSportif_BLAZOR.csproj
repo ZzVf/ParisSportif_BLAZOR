@@ -11,12 +11,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Components/Pages/Admin/" />
     <Folder Include="Components/Pages/Bets/" />
     <Folder Include="Components/Pages/Clients/" />
     <Folder Include="Components/Pages/Clubs/" />
     <Folder Include="Components/Pages/Ligues/" />
     <Folder Include="Components/Pages/Matchs/" />
+    <Folder Include="Components/Pages/User/" />
     <Folder Include="html/" />
+    <Folder Include="wwwroot/images/ligues/" />
   </ItemGroup>
 
 </Project>

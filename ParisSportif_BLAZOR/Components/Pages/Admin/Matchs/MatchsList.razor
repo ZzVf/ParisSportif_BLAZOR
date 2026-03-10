@@ -11,32 +11,41 @@
   <div class="accordion-item">
     <h2 class="accordion-header" id="headingOne">
       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-        <h3>Matchs</h3>
+        <h3>Matches</h3>
       </button>
     </h2>
     <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
       <div class="accordion-body">
         <div class="row align-items-end">
 
-            <div class="col-md-2">
+            <div class="row align-items-end">
 
-                @if(string.IsNullOrWhiteSpace(ErrorMessage)) {
-                    <button class="btn btn-sm btn-success me-1" @onclick="Add">
-                        Nouveau
-                    </button>
-                }   
-            </div>
+    <div class="col-md-3">
+        @if(string.IsNullOrWhiteSpace(ErrorMessage)) {
+            <button class="btn btn-success btn-lg w-100" @onclick="Add">
+                Nouveau
+            </button>
+        }   
+    </div>
 
-            <div class="col-md-8">
-                <label class="form-label">Club recherché</label>
-                <InputSelect class="form-control" @bind-Value="selectedClubId" onchange="OnClubSelected">
-                    <option value="0">-- Choisir un club --</option>
-                    @foreach (var club in clubs)
-                    {
-                        <option value="@club.Id">@club.Name</option>
-                    }
-                </InputSelect>
-            </div>
+    <div class="col-md-6">
+        <label class="form-label">Club recherché</label>
+        <InputSelect class="form-control form-control-lg" @bind-Value="selectedClubId">
+            <option value="0">-- Choisir un club --</option>
+            @foreach (var club in clubs)
+            {
+                <option value="@club.Id">@club.Name</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="col-md-3">
+        <button class="btn btn-success btn-lg w-100" @onclick="Filter">
+            Filtrer
+        </button>
+    </div>
+
+</div>
 
         </div>
     </div>
@@ -79,9 +88,9 @@ else{
           <td>@m.MatchDateTime</td>
           <td>@(m.isTopMatch ? "Oui" : "Non")</td>
           <td>@m.matchStatus</td>
-          <td>@m.Club1.Name</td>
-          <td>@m.Club2.Name</td>
-          <td>@m.Club1.Ligue?.Name</td>
+          <td>@m.Club1?.Name</td>
+          <td>@m.Club2?.Name</td>
+          <td>@m.Club1?.Ligue?.Name</td>
           <td>
             <button class="btn btn-sm btn-primary me-1" @onclick="() => Edit(m.Id)">Modifier</button>
             <button class="btn btn-sm btn-danger me-1" @onclick="() => ConfirmDelete(m.Id)">Annuler</button>
@@ -153,16 +162,14 @@ else{
         }
     }
 
-    private async Task OnClubSelected(ChangeEventArgs e)
+    private async Task Filter()
     {
-        if (int.TryParse(e.Value?.ToString(), out int clubId) && clubId != 0)
+        if (selectedClubId != 0)
         {
-            selectedClubId = clubId;
-            matchs = await MatchService.GetByClubIdAsync(clubId);
+            matchs = await MatchService.GetByClubIdAsync(selectedClubId);
         }
         else
         {
-            selectedClubId = 0;
             matchs = await MatchService.GetAllAsync();
         }
     }

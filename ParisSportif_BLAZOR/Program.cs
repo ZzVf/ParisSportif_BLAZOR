@@ -17,6 +17,8 @@ builder.Services.AddSingleton<BetService>();
 builder.Services.AddSingleton<ClientService>();
 builder.Services.AddSingleton<ClubService>();
 builder.Services.AddSingleton<LigueService>();
+builder.Services.AddScoped<ImageCleanupService>();
+builder.Services.AddHostedService<ImageScheduleCleanupWorker>();
 
 var app = builder.Build();
 
