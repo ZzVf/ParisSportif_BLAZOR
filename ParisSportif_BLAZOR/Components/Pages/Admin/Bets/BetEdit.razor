@@ -1,4 +1,4 @@
-﻿@page "/bets/edit/{id:int}"
+﻿@page "/admin/bets/edit/{id:int}"
 @using ParisSportif_BLAZOR.Model
 @using ParisSportif_BLAZOR.Services
 @inject BetService betService
@@ -132,7 +132,7 @@ else
         }
 
         selectedClient.Points = newPoints;
-        Navigation.NavigateTo("/bets");
+        Navigation.NavigateTo("/admin/bets");
     }
     catch (Exception ex)
     {
@@ -142,6 +142,6 @@ else
 
     private void Cancel()
     {
-        Navigation.NavigateTo("/bets");
+        Navigation.NavigateTo("/admin/bets");
     }
 }

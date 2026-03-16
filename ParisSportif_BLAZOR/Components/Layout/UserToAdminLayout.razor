@@ -1,5 +1,17 @@
-﻿<h3>UserToAdminLayout</h3>
+﻿@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<!-- Bouton bascule Admin/Utilisateur -->
+<button class="btn btn-sm btn-primary"
+        @onclick="GoToAdmin">
+    Passer en mode Administrateur
+</button>
+
 
 @code {
-
+    private void GoToAdmin()
+    {
+        // Navigue vers la page administrateur
+        Navigation.NavigateTo("/admin");
+    }
 }

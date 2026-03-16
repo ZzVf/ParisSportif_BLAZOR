@@ -1,4 +1,4 @@
-﻿@page "/ligues/edit/{id:int}"
+﻿@page "/admin/ligues/edit/{id:int}"
 @using ParisSportif_BLAZOR.Model
 @using ParisSportif_BLAZOR.Services
 @inject LigueService LigueService
@@ -71,7 +71,7 @@ else
         var success = await LigueService.UpdateAsync(ligue!);
 
         if (success)
-            Navigation.NavigateTo("/ligues");
+            Navigation.NavigateTo("/admin/ligues");
         else
             ErrorMessage = "Erreur lors de la modification.";
     }
@@ -102,6 +102,6 @@ else
 
     private void Cancel()
     {
-        Navigation.NavigateTo("/ligues");
+        Navigation.NavigateTo("/admin/ligues");
     }
 }

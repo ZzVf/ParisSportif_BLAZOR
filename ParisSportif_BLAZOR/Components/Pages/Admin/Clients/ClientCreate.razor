@@ -1,4 +1,4 @@
-﻿@page "/clients/create"
+﻿@page "/admin/clients/create"
 @using ParisSportif_BLAZOR.Model
 @inject ParisSportif_BLAZOR.Services.ClientService ClientService
 @inject NavigationManager Navigation
@@ -57,7 +57,7 @@
 
         if (result.Success)
         {
-            Navigation.NavigateTo("/clients");
+            Navigation.NavigateTo("/admin/clients");
             Console.WriteLine("Client créé avec succès : " + result.Data?.Id);
         }
         else
@@ -68,6 +68,6 @@
 
     private void Cancel()
     {
-        Navigation.NavigateTo("/clients");
+        Navigation.NavigateTo("/admin/clients");
     }
 }

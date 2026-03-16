@@ -1,5 +1,4 @@
-﻿@page "/clubs"
-@page "/clubslist"
+﻿@page "/admin/clubs"
 @using ParisSportif_BLAZOR.Model
 @using ParisSportif_BLAZOR.Services
 @rendermode InteractiveServer
@@ -150,12 +149,12 @@ else{
 
     private void Add()
     {
-        Navigation.NavigateTo("/clubs/create");
+        Navigation.NavigateTo("/admin/clubs/create");
     }
 
     private void Edit(int id)
     {
-        Navigation.NavigateTo($"/clubs/edit/{id}");
+        Navigation.NavigateTo($"/admin/clubs/edit/{id}");
     }
 
     private void CancelDelete()

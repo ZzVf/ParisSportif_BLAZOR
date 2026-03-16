@@ -1,4 +1,4 @@
-﻿@page "/clients/edit/{Id:int}"
+﻿@page "/admin/clients/edit/{Id:int}"
 @using ParisSportif_BLAZOR.Model
 @inject ParisSportif_BLAZOR.Services.ClientService ClientService
 @inject NavigationManager Navigation
@@ -83,7 +83,7 @@ else
         var success = await ClientService.UpdateAsync(client);
         if (success)
         {
-            Navigation.NavigateTo("/clients");
+            Navigation.NavigateTo("/admin/clients");
             Console.WriteLine("Client mis à jour avec succès : " + client?.Id);
         }
         else
@@ -94,6 +94,6 @@ else
 
     private void Cancel()
     {
-        Navigation.NavigateTo("/clients");
+        Navigation.NavigateTo("/admin/clients");
     }
 }

@@ -1,5 +1,4 @@
-﻿@page "/clients"
-@page "/clientslist"
+﻿@page "/admin/clients"
 @using ParisSportif_BLAZOR.Model
 @using ParisSportif_BLAZOR.Services
 @rendermode InteractiveServer
@@ -150,12 +149,12 @@ else
 
     private void Add()
     {
-        Navigation.NavigateTo("/clients/create");
+        Navigation.NavigateTo("/admin/clients/create");
     }
 
     private void Edit(int id)
     {
-        Navigation.NavigateTo($"/clients/edit/{id}");
+        Navigation.NavigateTo($"/admin/clients/edit/{id}");
     }
 
     private void CancelDelete()

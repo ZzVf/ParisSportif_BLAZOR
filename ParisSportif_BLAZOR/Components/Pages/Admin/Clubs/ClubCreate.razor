@@ -1,4 +1,4 @@
-﻿@page "/clubs/create"
+﻿@page "/admin/clubs/create"
 @using ParisSportif_BLAZOR.Model
 @using System.Runtime.InteropServices
 @inject ParisSportif_BLAZOR.Services.ClubService ClubService
@@ -78,7 +78,7 @@
         
         if (result.Success)
         {
-            Navigation.NavigateTo("/clubs");
+            Navigation.NavigateTo("/admin/clubs");
             Console.WriteLine("Club créé avec succès : " + result.Data?.Id);
         }
         else
@@ -113,6 +113,6 @@
 
     private void Cancel()
     {
-        Navigation.NavigateTo("/clubs");
+        Navigation.NavigateTo("/admin/clubs");
     }
 }

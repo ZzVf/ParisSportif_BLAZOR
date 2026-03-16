@@ -1,5 +1,4 @@
-﻿@page "/ligues"
-@page "/ligueslist"
+﻿@page "/admin/ligues"
 @using ParisSportif_BLAZOR.Services
 @using ParisSportif_BLAZOR.Model
 @rendermode InteractiveServer
@@ -141,12 +140,12 @@ else{
 
     private void Add()
     {
-        Navigation.NavigateTo("/ligues/create");
+        Navigation.NavigateTo("/admin/ligues/create");
     }
 
     private void Edit(int id)
     {
-        Navigation.NavigateTo($"/ligues/edit/{id}");
+        Navigation.NavigateTo($"/admin/ligues/edit/{id}");
     }
      private void CancelDelete()
     {

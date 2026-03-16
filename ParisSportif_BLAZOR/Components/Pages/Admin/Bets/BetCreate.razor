@@ -1,4 +1,4 @@
-﻿@page "/bets/create"
+﻿@page "/admin/bets/create"
 @using ParisSportif_BLAZOR.Model
 @inject ParisSportif_BLAZOR.Services.BetService BetService
 @inject ParisSportif_BLAZOR.Services.MatchService MatchService
@@ -101,7 +101,7 @@
         if (result.Success)
         {
             await ClientService.UpdatePointsAsync(selectedClient.Id, selectedClient.Points);
-            Navigation.NavigateTo("/bets");
+            Navigation.NavigateTo("/admin/bets");
             Console.WriteLine("Bet créé avec succès : " + result.Data?.Id);
         }
         else
@@ -112,6 +112,6 @@
 
     private void Cancel()
     {
-        Navigation.NavigateTo("/matches");
+        Navigation.NavigateTo("/admin/bets");
     }
 }

@@ -1,4 +1,4 @@
-﻿@page "/ligues/create"
+﻿@page "/admin/ligues/create"
 @using ParisSportif_BLAZOR.Model
 @inject ParisSportif_BLAZOR.Services.LigueService LigueService
 @inject NavigationManager Navigation
@@ -47,7 +47,7 @@
 
         if (result.Success)
         {
-            Navigation.NavigateTo("/ligues");
+            Navigation.NavigateTo("/admin/ligues");
             Console.WriteLine("Ligue créée avec succès : " + result.Data?.Id);
         }
         else
@@ -82,6 +82,6 @@
 
     private void Cancel()
     {
-        Navigation.NavigateTo("/matches");
+        Navigation.NavigateTo("/admin/ligues");
     }
 }

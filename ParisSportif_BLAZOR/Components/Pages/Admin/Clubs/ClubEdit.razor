@@ -1,4 +1,4 @@
-﻿@page "/clubs/edit/{id:int}"
+﻿@page "/admin/clubs/edit/{id:int}"
 @using ParisSportif_BLAZOR.Model
 @using ParisSportif_BLAZOR.Services
 @inject ClubService ClubService
@@ -91,7 +91,7 @@ else
         if (success){
             
 
-            Navigation.NavigateTo("/clubs");
+            Navigation.NavigateTo("/admin/clubs");
         }
         else
             ErrorMessage = "Erreur lors de la modification.";
@@ -122,6 +122,6 @@ else
     }
     private void Cancel()
     {
-        Navigation.NavigateTo("/clubs");
+        Navigation.NavigateTo("/admin/clubs");
     }
 }

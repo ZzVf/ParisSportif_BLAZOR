@@ -1,4 +1,4 @@
-﻿@page "/matches/edit/{id:int}"
+﻿@page "/admin/matches/edit/{id:int}"
 @using ParisSportif_BLAZOR.Model
 @using ParisSportif_BLAZOR.Services
 @inject MatchService MatchService
@@ -99,7 +99,7 @@ else
         var success = await MatchService.UpdateAsync(match);
         if (success)
         {
-            Navigation.NavigateTo("/matches");
+            Navigation.NavigateTo("/admin/matches");
         }
         else
         {
@@ -109,6 +109,6 @@ else
 
     private void Cancel()
     {
-        Navigation.NavigateTo("/matches");
+        Navigation.NavigateTo("/admin/matches");
     }
 }

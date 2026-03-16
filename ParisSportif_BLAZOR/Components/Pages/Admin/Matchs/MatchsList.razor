@@ -1,5 +1,4 @@
-﻿@page "/matches"
-@page "/matcheslist"
+﻿@page "/admin/matches"
 @using ParisSportif_BLAZOR.Services
 @using ParisSportif_BLAZOR.Model
 @rendermode InteractiveServer
@@ -203,11 +202,11 @@ else{
 
     private void Add()
     {
-        Navigation.NavigateTo("/matches/create");
+        Navigation.NavigateTo("/admin/matches/create");
     }
 
     private void Edit(int id)
     {
-        Navigation.NavigateTo($"/matches/edit/{id}"); 
+        Navigation.NavigateTo($"/admin/matches/edit/{id}"); 
     }
 }

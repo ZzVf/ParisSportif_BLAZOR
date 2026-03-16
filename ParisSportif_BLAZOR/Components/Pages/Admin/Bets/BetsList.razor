@@ -1,5 +1,4 @@
-﻿@page "/bets"
-@page "/betlist"
+﻿@page "/admin/bets"
 @using ParisSportif_BLAZOR.Model
 @using ParisSportif_BLAZOR.Services
 @rendermode InteractiveServer
@@ -148,12 +147,12 @@ else
 
     private void Add()
     {
-        Navigation.NavigateTo("/bets/create");
+        Navigation.NavigateTo("/admin/bets/create");
     }
 
     private void Edit(int id)
     {
-        Navigation.NavigateTo($"/bets/edit/{id}");
+        Navigation.NavigateTo($"/admin/bets/edit/{id}");
     }
 
     private void CancelDelete()
