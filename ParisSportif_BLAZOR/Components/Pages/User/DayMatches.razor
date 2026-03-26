@@ -1,109 +1,217 @@
 ﻿@layout Layout.UserLayout
 @page "/"
+@using ParisSportif_BLAZOR.Model
+@inject ParisSportif_BLAZOR.Services.MatchService MatchService
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
 
-<h2 class="mb-4">Matchs du jour</h2>
+<div class="container py-4">
 
-<div class="row g-4">
+    <!-- MATCHS A LA UNE -->
+    <section class="mb-5">
+        <h2 class="mb-4 text-center">À la une</h2>
 
-    <!-- MATCH CARD -->
-    <div class="col-md-6 col-lg-4">
-        <div class="card shadow-sm">
+        <div id="matchsALaUneCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#matchsALaUneCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#matchsALaUneCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#matchsALaUneCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
 
-            <div class="card-body text-center">
+            <div class="carousel-inner rounded shadow-sm bg-white">
 
-                <h6 class="text-muted">Premier League</h6>
+                @if(matchs != null)
+                {
+                    @foreach (var match in matchs.Where(m => m.isTopMatch))
+                    {
+                        var cotes = CalculerCotes(match.Club1.Ranking, match.Club2.Ranking);
+                        <div class="carousel-item @(match == matchs.First(m => m.isTopMatch) ? "active" : "")">
+                        <div class="card border-0">
+                            <div class="card-body text-center py-5">
 
-                <div class="d-flex justify-content-between align-items-center mt-3">
+                                <h5 class="fw-bold mb-2">@match.Club1.Ligue.Name</h5>
+                                <p class="text-muted mb-4">@match.MatchDateTime</p>
 
-                    <div>
-                        <img src="images/arsenal.png" width="40">
-                        <div>Arsenal</div>
+                                <div class="d-flex justify-content-center align-items-center gap-5 gap-md-7 flex-wrap">
+
+                                    <button class="btn p-0 border-0 bg-transparent text-center bet-logo-btn">
+                                        <img src="@match.Club1.Logo" width="90" height="90" class="img-fluid mb-2" alt="Logo @match.Club1.Name">
+                                        <div class="fw-semibold">@match.Club1.Name</div>
+                                        <div class="text-primary fw-bold">@cotes.cote1</div>
+                                    </button>
+
+                                    <div class="text-center mx-4 mx-md-5">
+                                        <div class="fw-bold fs-2">VS</div>
+                                        <div class="fs-4 fw-semibold mt-2">@match.Score1 - @match.Score2</div>
+                                    </div>
+
+                                    <button class="btn p-0 border-0 bg-transparent text-center bet-logo-btn">
+                                        <img src="@match.Club2.Logo" width="90" height="90" class="img-fluid mb-2" alt="Logo @match.Club2.Name">
+                                        <div class="fw-semibold">@match.Club2.Name</div>
+                                        <div class="text-primary fw-bold">@cotes.cote2</div>
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="fw-bold fs-5">
-                        20:45
-                    </div>
-
-                    <div>
-                        <img src="images/liverpool.png" width="40">
-                        <div>Liverpool</div>
-                    </div>
-
-                </div>
-
-                <hr>
-
-                <div class="d-flex justify-content-between">
-
-                    <button class="btn btn-outline-primary btn-sm">
-                        1 — 2.10
-                    </button>
-
-                    <button class="btn btn-outline-primary btn-sm">
-                        X — 3.40
-                    </button>
-
-                    <button class="btn btn-outline-primary btn-sm">
-                        2 — 2.90
-                    </button>
-
-                </div>
+                    }
+                }  
 
             </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#matchsALaUneCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Précédent</span>
+            </button>
+
+            <button class="carousel-control-next" type="button" data-bs-target="#matchsALaUneCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Suivant</span>
+            </button>
         </div>
-    </div>
+    </section>
 
+    <!-- MATCHS -->
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <h2 class="mb-0">Matchs</h2>
 
-    <!-- AUTRE MATCH -->
-    <div class="col-md-6 col-lg-4">
-        <div class="card shadow-sm">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#dateSearchModal">
+                Recherche
+            </button>
+        </div>
 
-            <div class="card-body text-center">
+            <div class="row g-4">
 
-                <h6 class="text-muted">La Liga</h6>
+                <!-- MATCH CARD -->
+                
+                @if(matchs != null) 
+                {
+                    @foreach(var match in matchs
+                    .Where(m => !DateFilter.HasValue || m.MatchDateTime.Date == DateFilter.Value.Date )
+                    .OrderBy(match => match.MatchDateTime)) 
+                    {
+                        if(match.matchStatus == MatchStatus.Canceled || match.isTopMatch) {
+                            continue;
+                        } else {
+                            var cotes = CalculerCotes(match.Club1.Ranking, match.Club2.Ranking);
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="card shadow-sm h-100">
+                                <div class="card-body text-center">
 
-                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <h6 class="text-muted">@match.Club1.Ligue.Name</h6>
 
-                    <div>
-                        <img src="images/real.png" width="40">
-                        <div>Real Madrid</div>
+                                    <div class="d-flex justify-content-between align-items-center mt-4">
+
+                                        <button class="btn p-0 border-0 bg-transparent text-center w-25 bet-logo-btn">
+                                            <img src="@match.Club1.Logo" width="55" height="55" class="img-fluid mb-2" alt="Logo @match.Club1.Name">
+                                            <div>@match.Club1.Name</div>
+                                            <div class="small text-primary fw-bold">@cotes.cote1</div>
+                                        </button>
+
+                                        <div class="text-center w-50">
+                                            <div class="text-muted small">@match.MatchDateTime.ToString("dd/MM/yy")</div>
+                                            <div class="fw-bold fs-5">@match.MatchDateTime.ToString("HH:mm")</div>
+                                            <div class="fw-semibold mt-2">@match.Score1 - @match.Score2</div>
+                                            <div class="text-muted small mt-1">VS</div>
+                                        </div>
+
+                                        <button class="btn p-0 border-0 bg-transparent text-center w-25 bet-logo-btn">
+                                            <img src="@match.Club2.Logo" width="55" height="55" class="img-fluid mb-2" alt="Logo @match.Club2.Name">
+                                            <div>@match.Club2.Name</div>
+                                            <div class="small text-primary fw-bold">@cotes.cote2</div>
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        }
+                        
+                    }
+                }
+
+            
+
+        </div>
+        <!-- Modal calendrier -->
+        <div class="modal fade" id="dateSearchModal" tabindex="-1" aria-labelledby="dateSearchModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dateSearchModalLabel">Rechercher par date</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                     </div>
 
-                    <div class="fw-bold fs-5">
-                        21:00
+                    <div class="modal-body">
+                        <label for="matchDate" class="form-label">Choisir une date</label>
+                        <input id="matchDate" type="date" @bind-value="SelectedDate" class="form-control" />
                     </div>
 
-                    <div>
-                        <img src="images/barca.png" width="40">
-                        <div>Barcelone</div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @onclick="CancelFilter">Annuler</button>
+                        <button type="button" class="btn btn-success" data-bs-dismiss="modal" @onclick="FilterDate">Valider</button>
                     </div>
 
                 </div>
-
-                <hr>
-
-                <div class="d-flex justify-content-between">
-
-                    <button class="btn btn-outline-primary btn-sm">
-                        1 — 1.80
-                    </button>
-
-                    <button class="btn btn-outline-primary btn-sm">
-                        X — 3.60
-                    </button>
-
-                    <button class="btn btn-outline-primary btn-sm">
-                        2 — 4.10
-                    </button>
-
-                </div>
-
             </div>
         </div>
-    </div>
+    </section>
 
 </div>
 
-@code {
+<style>
+    .bet-logo-btn {
+        transition: transform 0.2s ease;
+        cursor: pointer;
+    }
 
+    .bet-logo-btn:hover {
+        transform: scale(1.08);
+    }
+</style>
+
+@code
+{
+    List<Match> matchs;
+    private DateTime? SelectedDate, DateFilter;
+    private void FilterDate() {
+        DateFilter = SelectedDate;
+    }
+    private void CancelFilter() {
+        DateFilter = null;
+    }
+    string ErrorMessage = "";
+
+        protected override async Task OnInitializedAsync()
+        {
+            try
+            {
+                matchs = await MatchService.GetAllAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = "Erreur lors du chargement des matchs : " + ex.Message;
+            }
+        }
+
+        private (double cote1, double cote2) CalculerCotes(int rank1, int rank2)
+{
+    double force1 = 1.0 / rank1;
+    double force2 = 1.0 / rank2;
+
+    double total = force1 + force2;
+
+    double proba1 = force1 / total;
+    double proba2 = force2 / total;
+
+    double cote1 = 1 / proba1;
+    double cote2 = 1 / proba2;
+
+    return (Math.Round(cote1, 2), Math.Round(cote2, 2));
+}
 }
