@@ -1,12 +1,11 @@
-# Sports Betting API
+# Sports Betting Blazor
 
-REST API for a sports betting web application built with .NET Core and PostgreSQL.
+Frontend for a sports betting web application built with Blazor.
 
 ## Tech Stack
-- C# / .NET Core
-- PostgreSQL
-- Entity Framework Core
-- REST API
+- C# / Blazor
+- .NET Core
+- Connected to Sports Betting API
 
 ## School Project
 Built as part of my Computer Science studies at ISPO Binche.
